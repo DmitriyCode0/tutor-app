@@ -1,0 +1,85 @@
+/**
+ * @license
+ * SPDX-License-Identifier: Apache-2.0
+*/
+
+.toast-container {
+  position: fixed;
+  bottom: 20px;
+  right: 20px; 
+  z-index: 2000;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  align-items: flex-end; 
+}
+.toast-message {
+  color: var(--text-toast);
+  padding: 0.9rem 1.3rem; /* Slightly more padding */
+  border-radius: 6px;
+  box-shadow: var(--shadow-toast);
+  font-size: 0.95rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  min-width: 280px; /* Ensure enough width for message */
+  max-width: 380px;
+  animation: toast-in 0.3s cubic-bezier(0.25, 0.1, 0.25, 1); /* Smoother animation */
+  word-break: break-word;
+}
+.toast-success { background-color: var(--bg-toast-success); }
+.toast-error   { background-color: var(--bg-toast-error); }
+.toast-info    { background-color: var(--bg-toast-default); } 
+
+.toast-close-button {
+  background: none;
+  border: none;
+  color: inherit; /* Inherits from parent, which is var(--text-toast) */
+  font-size: 1.6rem; /* Larger close button */
+  margin-left: 1rem;
+  cursor: pointer;
+  line-height: 1;
+  opacity: 0.8; /* Slightly more visible */
+  padding: 0.2rem; /* Clickable area */
+}
+.toast-close-button:hover {
+  opacity: 1;
+}
+
+@keyframes toast-in {
+  from { 
+    transform: translateX(110%); /* Start further off-screen */
+    opacity: 0; 
+  } 
+  to   { 
+    transform: translateX(0); 
+    opacity: 1; 
+  }
+}
+
+
+/* Responsive Adjustments for ToastNotification.css */
+@media (max-width: 768px) {
+  .toast-container {
+    bottom: 10px;
+    left: 10px;
+    right: 10px;
+    align-items: center; /* Center toasts on smaller screens */
+  }
+  .toast-message {
+    width: auto; /* Allow toast to size to content, up to max-width */
+    max-width: 90%; /* Ensure it doesn't hit screen edges */
+    margin: 0 auto; /* Center if width is less than max-width */
+    min-width: 0; /* Remove min-width on small screens */
+  }
+  @keyframes toast-in { /* Adjust animation for bottom-center */
+    from { 
+      transform: translateY(100%); 
+      opacity: 0; 
+    }
+    to   { 
+      transform: translateY(0); 
+      opacity: 1; 
+    }
+  }
+}

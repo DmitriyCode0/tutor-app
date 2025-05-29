@@ -1,0 +1,143 @@
+/**
+ * @license
+ * SPDX-License-Identifier: Apache-2.0
+*/
+
+.time-slot-cell {
+  position: relative;
+  padding: 0; /* Let lesson-details handle padding for content */
+  height: var(--time-slot-height); /* Fixed height from global.css */
+  /* border-right and border-bottom are on .grid-cell in WeeklyCalendar.css */
+  /* border-top and border-left are implicit from previous cells */
+  background-clip: padding-box; 
+  cursor: pointer;
+  transition: background-color 0.1s ease;
+  display: flex; /* To center add-lesson-plus or lesson-details */
+  align-items: stretch; /* Make lesson-details fill height */
+  justify-content: stretch; /* Make lesson-details fill width */
+}
+.time-slot-cell:hover:not(:has(.lesson-details)) { /* Hover for empty slots */
+  background-color: var(--bg-tertiary);
+}
+
+.today-timeslot {
+  /* No specific outline needed if student color is present and fills cell */
+  /* Could add a subtle inner glow or border if desired for today's empty slots */
+}
+.today-timeslot:not(:has(.lesson-details)) {
+   /* background-color: var(--bg-accent); Optional: highlight today's empty slots slightly */
+}
+
+
+.add-lesson-plus {
+  font-size: 1.5rem;
+  color: var(--text-placeholder);
+  margin: auto; /* Center the plus sign in the empty cell */
+  user-select: none;
+}
+
+.lesson-details {
+  width: 100%;
+  height: 100%;
+  padding: 6px;
+  border-radius: 0; /* No radius, as it fills the cell which has borders */
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between; 
+  align-items: center;
+  text-align: center;
+  font-size: 0.8rem;
+  overflow: hidden;
+  position: relative; 
+  cursor: grab;
+  /* box-shadow: var(--shadow-chip); Removed, cell itself has border */
+}
+.lesson-details:active {
+  cursor: grabbing;
+}
+
+.lesson-name-chip {
+  background-color: var(--lesson-student-name-bg);
+  color: var(--lesson-student-name-text);
+  padding: 4px 8px; 
+  border-radius: 12px; 
+  font-size: 0.95rem; 
+  font-weight: 600;
+  margin-bottom: 4px; 
+  display: inline-block; /* So it doesn't take full width */
+  max-width: 95%;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  box-shadow: var(--shadow-chip);
+}
+.lesson-price-display {
+  font-size: 0.9rem; 
+  font-weight: 500;
+  color: var(--lesson-price-text);
+  margin-bottom: 4px; 
+}
+.lesson-time-duration-display {
+  font-size: 0.8rem; 
+  color: var(--lesson-time-duration-text);
+}
+
+.lesson-indicator {
+  position: absolute;
+  padding: 3px 7px; 
+  border-radius: 10px; 
+  font-size: 0.75rem; 
+  font-weight: bold;
+  line-height: 1;
+  box-shadow: var(--shadow-chip);
+  user-select: none;
+}
+
+.lesson-paid-indicator-chip {
+  bottom: 5px;
+  left: 5px;
+  background-color: var(--lesson-chip-paid-bg);
+  color: var(--lesson-chip-paid-text);
+  text-shadow: var(--text-shadow-chip); 
+}
+.lesson-recurring-indicator-chip {
+  top: 5px;
+  right: 5px;
+  background-color: var(--lesson-chip-recurring-bg);
+  color: var(--lesson-chip-recurring-text);
+}
+.lesson-tip-amount-chip {
+  bottom: 5px;
+  right: 5px;
+  background-color: var(--lesson-chip-tips-bg);
+  color: var(--lesson-chip-tips-text);
+}
+
+
+.drag-over-active {
+  outline: 3px dashed var(--border-drag-active);
+  outline-offset: -3px; /* Inside the cell */
+  background-color: var(--bg-accent) !important; /* Ensure it overrides student color */
+}
+
+/* Responsive Adjustments for TimeSlotCell.css */
+@media (max-width: 768px) {
+  .lesson-name-chip { 
+    font-size: 0.8rem; 
+    padding: 2px 5px;
+    margin-bottom: 2px;
+  }
+  .lesson-price-display { 
+    font-size: 0.75rem; 
+    margin-bottom: 2px;
+  }
+  .lesson-time-duration-display { font-size: 0.7rem; }
+  .lesson-indicator { 
+    font-size: 0.65rem; 
+    padding: 2px 4px; 
+    bottom: 3px; left: 3px; right: 3px; top: 3px; /* Adjust for smaller cells */
+  }
+   .lesson-recurring-indicator-chip { top: 3px; right: 3px; }
+   .lesson-tip-amount-chip { bottom: 3px; right: 3px; }
+   .lesson-paid-indicator-chip { bottom: 3px; left: 3px; }
+}

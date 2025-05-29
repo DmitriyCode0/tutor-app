@@ -1,0 +1,154 @@
+/**
+ * @license
+ * SPDX-License-Identifier: Apache-2.0
+*/
+
+.app-container {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+header {
+  background-color: var(--bg-secondary);
+  padding: 1rem 1.5rem;
+  box-shadow: var(--shadow-primary);
+  border-bottom: 1px solid var(--border-primary);
+}
+
+.header-content {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  max-width: 1300px; /* Consistent max-width */
+  margin: 0 auto;
+}
+
+#app-main-heading {
+  color: var(--text-header);
+  margin: 0;
+  font-size: 1.8rem;
+  font-weight: 600;
+}
+
+.settings-button {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0.5rem;
+  color: var(--text-secondary);
+  transition: color 0.2s ease;
+  display: flex; /* For aligning SVG */
+  align-items: center;
+  justify-content: center;
+}
+.settings-button:hover {
+  color: var(--text-accent);
+}
+.settings-button svg {
+  width: 28px;
+  height: 28px;
+  fill: currentColor;
+}
+
+.main-nav {
+  display: flex;
+  gap: 0.5rem;
+  margin-top: 0.5rem;
+  border-bottom: 1px solid var(--border-primary);
+  padding-bottom: 0.75rem;
+  max-width: 1300px; /* Consistent max-width */
+  margin-left: auto;
+  margin-right: auto;
+}
+.nav-button {
+  padding: 0.6rem 1.2rem;
+  border: none;
+  background-color: transparent;
+  color: var(--text-nav-button);
+  cursor: pointer;
+  font-size: 1rem;
+  font-weight: 500;
+  border-radius: 6px;
+  transition: background-color 0.2s ease, color 0.2s ease;
+}
+.nav-button:hover {
+  background-color: var(--bg-tertiary);
+}
+.nav-button.active {
+  background-color: var(--button-primary-bg);
+  color: var(--text-nav-button-active);
+  font-weight: 600;
+}
+
+.calendar-controls {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 1rem;
+  background-color: var(--bg-secondary);
+  border-bottom: 1px solid var(--border-primary);
+  box-shadow: var(--shadow-primary);
+  gap: 0.75rem;
+  max-width: 1300px; /* Consistent max-width */
+  margin: 0 auto;
+  margin-bottom: 1rem; /* Space before calendar */
+  border-radius: 0 0 8px 8px; /* Rounded bottom corners if it's the last header element */
+}
+
+.date-range-display {
+  font-weight: 500;
+  color: var(--text-secondary);
+  margin: 0 0.5rem;
+  text-align: center;
+}
+
+main {
+  flex-grow: 1;
+  padding: 0 1.5rem 1.5rem 1.5rem; /* Adjust padding if calendar controls move */
+  max-width: 1300px; /* Max width for content area */
+  width: 100%;
+  margin: 0 auto;
+}
+
+
+/* Responsive Adjustments for App.css */
+@media (max-width: 768px) {
+  header {
+    padding: 0.75rem 1rem;
+  }
+  #app-main-heading {
+    font-size: 1.5rem;
+  }
+  .settings-button svg {
+    width: 24px; height: 24px;
+  }
+  .main-nav {
+    gap: 0.25rem;
+    justify-content: center; /* Center nav buttons on smaller screens */
+  }
+  .nav-button {
+    padding: 0.5rem 0.8rem;
+    font-size: 0.9rem;
+  }
+  .calendar-controls {
+    padding: 0.75rem;
+    gap: 0.5rem;
+    flex-wrap: wrap; /* Allow controls to wrap */
+    border-radius: 0; /* Remove rounding if it's not the bottom anymore */
+  }
+   .date-range-display {
+    font-size: 0.85rem;
+    flex-basis: 100%; 
+    text-align: center;
+    margin-top: 0.5rem;
+  }
+  main {
+    padding: 1rem;
+  }
+}
+
+@media (max-width: 480px) {
+  #app-main-heading { font-size: 1.3rem; }
+  .nav-button { font-size: 0.8rem; padding: 0.4rem 0.6rem; }
+}

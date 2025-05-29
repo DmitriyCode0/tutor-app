@@ -1,0 +1,107 @@
+/**
+ * @license
+ * SPDX-License-Identifier: Apache-2.0
+*/
+
+.calendar-grid-wrapper {
+  overflow-x: auto;
+  background-color: var(--bg-secondary);
+  border: 1px solid var(--border-primary);
+  border-radius: 8px;
+  box-shadow: var(--shadow-calendar);
+  margin-top: 1rem; /* If calendar controls are outside */
+}
+.calendar-grid {
+  display: grid;
+  /* min-width helps with horizontal scroll before content shrinks too much */
+  /* Time label width + 7 days * some reasonable minimum width for a day column */
+  min-width: calc(var(--time-label-width) + 7 * 100px); 
+}
+.grid-cell { /* Base styles for all grid cells */
+  border-right: 1px solid var(--border-secondary);
+  border-bottom: 1px solid var(--border-secondary);
+  padding: 0; /* Padding will be in TimeSlotCell or specific header cells */
+  display: flex;
+  flex-direction: column; /* Default for header cells */
+  align-items: center;
+  justify-content: center; /* Center content in header cells */
+  text-align: center;
+  font-size: 0.85rem;
+}
+/* Remove right border from the last column of cells in each row effectively */
+.calendar-grid > div:nth-child(8n) { /* Every 8th element in the grid (time label + 7 days) */
+  /* This selector targets the last day cell in each row of days if grid is flat */
+  /* More robust if applied to TimeSlotCell directly if it's the last in its row */
+}
+/* Remove bottom border from the cells in the last row */
+/* This is tricky with dynamic rows, often handled by the wrapper or individual cells knowing their position */
+
+
+.header-cell {
+  background-color: var(--bg-tertiary);
+  font-weight: 600;
+  color: var(--text-header);
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  height: 50px; /* Example fixed height for day headers */
+  padding: 0.5rem;
+}
+
+.day-header-cell {
+  /* Specific styles for day headers if different from generic header-cell */
+}
+
+.time-label-cell {
+  background-color: var(--bg-tertiary);
+  font-weight: 500;
+  color: var(--text-secondary);
+  position: sticky;
+  left: 0;
+  z-index: 5; 
+  width: var(--time-label-width);
+  min-width: var(--time-label-width); /* Ensure it doesn't shrink */
+  height: var(--time-slot-height); /* Match time slot height */
+  padding: 0.5rem 0; /* Vertical padding */
+}
+
+.corner-cell {
+  z-index: 15; 
+  position: sticky;
+  left: 0;
+  top: 0; /* Important for stickiness */
+  width: var(--time-label-width);
+  height: 50px; /* Match day header height */
+}
+.timezone-info {
+  font-size: 0.7rem;
+  color: var(--text-secondary);
+}
+.today-header {
+  background-color: var(--bg-accent) !important;
+  color: var(--text-accent) !important;
+  font-weight: bold;
+}
+
+/* Responsive Adjustments for WeeklyCalendar.css */
+@media (max-width: 768px) {
+  .grid-cell { /* Base */
+    font-size: 0.75rem;
+  }
+  .header-cell { /* Day headers */
+    height: 40px;
+    padding: 0.3rem;
+  }
+   .time-label-cell {
+    font-size: 0.7rem;
+  }
+  .corner-cell {
+    height: 40px;
+  }
+}
+
+@media (max-width: 480px) {
+  .grid-cell {
+    font-size: 0.7rem;
+  }
+}

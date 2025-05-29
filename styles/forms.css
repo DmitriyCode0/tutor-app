@@ -1,0 +1,82 @@
+/**
+ * @license
+ * SPDX-License-Identifier: Apache-2.0
+*/
+
+.modal-form .form-group {
+  margin-bottom: 1.2rem; /* Slightly more space between form groups */
+}
+.modal-form label {
+  display: block;
+  margin-bottom: 0.4rem; /* Space between label and input */
+  font-weight: 500;
+  color: var(--text-secondary);
+  font-size: 0.9rem;
+}
+.modal-form input[type="text"],
+.modal-form input[type="number"],
+.modal-form input[type="tel"],
+.modal-form input[type="time"],
+.modal-form select {
+  width: 100%;
+  padding: 0.7rem 0.9rem; /* Slightly larger padding */
+  border: 1px solid var(--border-input);
+  border-radius: 6px;
+  font-size: 1rem;
+  font-family: var(--font-primary);
+  background-color: var(--bg-input);
+  color: var(--text-primary);
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+.modal-form input[type="text"]:focus,
+.modal-form input[type="number"]:focus,
+.modal-form input[type="tel"]:focus,
+.modal-form input[type="time"]:focus,
+.modal-form select:focus {
+  outline: none;
+  border-color: var(--border-input-focus);
+  box-shadow: 0 0 0 3px rgba(74, 144, 226, 0.15); /* Softer focus shadow */
+}
+.modal-form input[disabled],
+.modal-form select[disabled] {
+    background-color: var(--bg-input-disabled);
+    color: var(--text-disabled);
+    cursor: not-allowed;
+}
+
+.modal-form input[type="radio"] {
+  margin-right: 0.3rem;
+  vertical-align: middle;
+  accent-color: var(--text-accent); /* Modern way to style radio checked color */
+}
+.modal-form .radio-label { /* Label next to a radio button */
+  font-weight: normal;
+  margin-left: 0.3rem;
+  color: var(--text-primary);
+  font-size: 0.95rem;
+  display: inline-block; /* Keep label on same line */
+  margin-bottom: 0; /* Override default label margin if any */
+  vertical-align: middle;
+}
+.modal-form .form-group div:has(input[type="radio"]) { /* Spacing for radio options */
+    margin-bottom: 0.4rem;
+}
+.modal-form .form-group div:has(input[type="radio"]):last-child {
+    margin-bottom: 0;
+}
+
+
+/* Responsive Adjustments for forms.css */
+@media (max-width: 768px) {
+  .modal-form input[type="text"],
+  .modal-form input[type="number"],
+  .modal-form input[type="tel"],
+  .modal-form input[type="time"],
+  .modal-form select {
+    padding: 0.6rem 0.8rem;
+    font-size: 0.95rem;
+  }
+  .modal-form label {
+    font-size: 0.85rem;
+  }
+}

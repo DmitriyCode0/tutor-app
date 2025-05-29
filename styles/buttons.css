@@ -1,0 +1,139 @@
+/**
+ * @license
+ * SPDX-License-Identifier: Apache-2.0
+*/
+
+/* Base for buttons within modal actions for consistent spacing */
+.modal-actions {
+  margin-top: 1.5rem;
+  display: flex;
+  justify-content: flex-end; /* Default for most modals */
+  gap: 0.75rem;
+  flex-wrap: wrap; /* Allow buttons to wrap on smaller screens */
+}
+.modal-actions button { /* Common properties for modal action buttons */
+  padding: 0.7rem 1.3rem; /* Slightly larger buttons */
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 0.95rem;
+  font-weight: 500;
+  transition: background-color 0.2s ease, opacity 0.2s ease;
+  text-decoration: none;
+  text-align: center;
+  line-height: 1.4; /* Ensure text is centered vertically */
+}
+.modal-actions button:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+.button-primary {
+  background-color: var(--button-primary-bg);
+  color: var(--text-button-primary);
+}
+.button-primary:hover:not(:disabled) { background-color: var(--button-primary-hover-bg); }
+
+.button-secondary {
+  background-color: var(--button-secondary-bg);
+  color: var(--text-button-secondary);
+  border: 1px solid var(--border-primary);
+}
+.button-secondary:hover:not(:disabled) { background-color: var(--button-secondary-hover-bg); }
+
+.button-danger {
+  background-color: var(--button-danger-bg);
+  color: var(--text-button-danger);
+}
+.button-danger:hover:not(:disabled) { background-color: var(--button-danger-hover-bg); }
+
+.button-add-weekly-button {
+  background-color: var(--button-add-weekly-bg);
+  color: var(--text-button-primary);
+}
+.button-add-weekly-button:hover:not(:disabled) { background-color: var(--button-add-weekly-hover-bg); }
+
+/* Specific Buttons */
+.top-up-button {
+    background-color: var(--button-topup-bg);
+    color: var(--text-button-primary);
+    padding: 0.3rem 0.7rem; /* Smaller button */
+    font-size: 0.8rem;
+    margin-left: 0.5rem;
+    border-radius: 4px;
+}
+.top-up-button:hover:not(:disabled) { background-color: var(--button-topup-hover-bg); }
+
+.control-button { /* For Prev/Next/Today in calendar controls */
+  padding: 0.5rem 1rem;
+  background-color: var(--button-secondary-bg);
+  color: var(--text-button-secondary);
+  border: 1px solid var(--border-primary);
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: 500;
+  transition: background-color 0.2s ease;
+}
+.control-button:hover:not(:disabled) {
+  background-color: var(--button-secondary-hover-bg);
+}
+.today-button { /* Specific override for Today button */
+  background-color: var(--button-primary-bg);
+  color: var(--text-button-primary);
+  border-color: var(--button-primary-bg); /* Match border to bg */
+}
+.today-button:hover:not(:disabled) {
+  background-color: var(--button-primary-hover-bg);
+  border-color: var(--button-primary-hover-bg);
+}
+
+.view-toggle-button { /* For Stats Page Weekly/Monthly/Overall toggles */
+  padding: 0.6rem 1.1rem;
+  border: 1px solid var(--border-primary);
+  background-color: var(--button-view-toggle-bg);
+  color: var(--button-view-toggle-text);
+  cursor: pointer;
+  border-radius: 6px;
+  font-weight: 500;
+  transition: background-color 0.2s ease, color 0.2s ease, border-color 0.2s ease;
+}
+.view-toggle-button.active {
+  background-color: var(--button-view-toggle-active-bg);
+  color: var(--button-view-toggle-active-text);
+  border-color: var(--button-view-toggle-active-bg);
+}
+.view-toggle-button:hover:not(.active):not(:disabled) {
+    background-color: var(--bg-tertiary); /* Subtle hover */
+}
+
+.student-report-button { /* For "Generate Report" on StudentsPage */
+    margin-top: 0.5rem;
+    align-self: flex-start;
+    /* Inherits from .button-secondary via className */
+}
+
+
+/* Responsive Adjustments for buttons.css */
+@media (max-width: 768px) {
+  .modal-actions button {
+    padding: 0.6rem 1rem;
+    font-size: 0.9rem;
+  }
+  .modal-actions { 
+    justify-content: center; /* Center buttons on small screens if they wrap */
+  }
+  .control-button {
+    padding: 0.4rem 0.8rem;
+    font-size: 0.85rem;
+  }
+   .view-toggle-button {
+    padding: 0.5rem 0.9rem;
+    font-size: 0.85rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .control-button, .view-toggle-button {
+    font-size: 0.8rem;
+  }
+}

@@ -1,0 +1,127 @@
+/**
+ * @license
+ * SPDX-License-Identifier: Apache-2.0
+*/
+
+.students-page h2 {
+  color: var(--text-header);
+  text-align: center;
+  margin-bottom: 2rem;
+  font-size: 1.8rem;
+  font-weight: 600;
+}
+.student-list {
+  list-style: none;
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(340px, 1fr)); /* Slightly wider min for student cards */
+  gap: 1.5rem;
+}
+.student-item {
+  background-color: var(--bg-secondary);
+  padding: 1.5rem;
+  border-radius: 8px;
+  box-shadow: var(--shadow-primary);
+  border: 1px solid var(--border-primary);
+  display: flex;
+  flex-direction: column; /* Ensures color picker is below main info if wrapped */
+  gap: 1rem;
+}
+.student-info-main {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start; 
+    gap: 1rem; 
+    width: 100%; /* Ensure it takes full width for flex */
+}
+.student-info-details {
+    display: flex;
+    flex-direction: column;
+    gap: 0.6rem; /* Space between stat lines */
+    flex-grow: 1; /* Takes available space */
+}
+.student-info-details .student-name {
+  font-size: 1.5rem; /* Larger student name */
+  font-weight: 600;
+  color: var(--text-header);
+  margin-bottom: 0.3rem;
+}
+.student-info-details .student-stat {
+  font-size: 0.95rem; /* Readable stat text */
+  color: var(--text-secondary);
+  display: flex; /* For aligning Top Up button nicely */
+  align-items: center;
+  flex-wrap: wrap; /* Allow button to wrap if needed */
+}
+/* .top-up-button is in buttons.css */
+/* .student-report-button is in buttons.css */
+
+
+.color-picker-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr); /* 4 colors per row */
+  gap: 8px; /* Space between color swatches */
+  max-width: 130px; /* Controls overall width of the picker block */
+  margin-left: auto; /* Aligns to the right if space allows, or below on wrap */
+}
+.color-swatch-button {
+  width: 26px; /* Slightly larger swatches */
+  height: 26px;
+  border: 2px solid transparent; 
+  border-radius: 50%;
+  cursor: pointer;
+  transition: transform 0.1s ease, border-color 0.2s ease, box-shadow 0.2s ease;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  outline: none; /* Remove default focus outline, rely on border/shadow */
+}
+.color-swatch-button:hover {
+  transform: scale(1.1);
+  box-shadow: 0 0 5px rgba(0,0,0,0.2);
+}
+.color-swatch-button:focus-visible { /* Accessibility focus style */
+    border-color: var(--text-accent);
+    box-shadow: 0 0 0 2px var(--text-accent);
+}
+.color-swatch-button.selected-color-swatch {
+  border-color: var(--text-primary); /* Stronger selected border */
+  transform: scale(1.15);
+  box-shadow: 0 0 8px var(--text-accent); /* Highlight selected with shadow */
+}
+.color-swatch-checkmark {
+    font-size: 0.9rem; /* Checkmark size */
+    color: var(--text-on-accent-bg); /* Ensure high contrast */
+    filter: drop-shadow(0 0 1px rgba(0,0,0,0.6)); /* Better visibility */
+    user-select: none;
+}
+
+/* Responsive Adjustments for StudentsPage.css */
+@media (max-width: 768px) {
+  .students-page h2 {
+    font-size: 1.6rem;
+  }
+  .student-list {
+    grid-template-columns: 1fr; /* Stack student cards */
+  }
+  .student-item { padding: 1.2rem; }
+  .student-info-main { 
+    flex-direction: column; /* Stack details and color picker */
+    align-items: center; /* Center color picker when stacked */
+  }
+  .student-info-details {
+    align-items: center; /* Center text within details block */
+    text-align: center;
+  }
+  .student-info-details .student-name {
+    font-size: 1.3rem;
+  }
+  .student-info-details .student-stat {
+    font-size: 0.9rem;
+    justify-content: center; /* Center content within stat line */
+  }
+  .color-picker-grid { 
+    margin-top: 1rem; 
+    margin-left: 0; /* Center when stacked */
+  }
+}

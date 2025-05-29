@@ -1,0 +1,193 @@
+/**
+ * @license
+ * SPDX-License-Identifier: Apache-2.0
+*/
+
+:root {
+  --font-primary: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+  
+  /* Light Mode Colors */
+  --bg-primary: #f0f4f8; 
+  --bg-secondary: #ffffff; 
+  --bg-tertiary: #e9eef2; 
+  --bg-accent: #e8f0fe; 
+  --bg-modal-backdrop: rgba(0, 0, 0, 0.75); /* Increased opacity for light mode */
+  --bg-modal: #ffffff; 
+  --bg-input: #ffffff;
+  --bg-input-disabled: #f0f0f0;
+  --bg-toast-default: #333333;
+  --bg-toast-success: #27ae60;
+  --bg-toast-error: #e74c3c;
+  --bg-toast-info: #2980b9;
+
+  --text-primary: #2c3e50; 
+  --text-secondary: #5f6368; 
+  --text-accent: #1a73e8;   
+  --text-header: #2c3e50;   
+  --text-nav-button: #2c3e50;
+  --text-nav-button-active: #ffffff;
+  --text-button-primary: #ffffff;
+  --text-button-secondary: #2c3e50;
+  --text-button-danger: #ffffff;
+  --text-toast: #ffffff;
+  --text-placeholder: #7f8c8d;
+  --text-disabled: #95a5a6;
+  --text-on-accent-bg: #ffffff; 
+
+  --border-primary: #dde3e8; 
+  --border-secondary: #b0b8c0; 
+  --border-input: #ced4da;
+  --border-input-focus: #4a90e2;
+  --border-drag-active: #4a90e2;
+
+  --button-primary-bg: #2c3e50;
+  --button-primary-hover-bg: #3e566d;
+  --button-secondary-bg: #e9eef2;
+  --button-secondary-hover-bg: #dde3e8;
+  --button-danger-bg: #e74c3c;
+  --button-danger-hover-bg: #c0392b;
+  --button-add-weekly-bg: #16a085;
+  --button-add-weekly-hover-bg: #117e68;
+  --button-topup-bg: #4CAF50;
+  --button-topup-hover-bg: #45a049;
+  --button-view-toggle-bg: #e0e0e0;
+  --button-view-toggle-active-bg: #2c3e50;
+  --button-view-toggle-text: #333;
+  --button-view-toggle-active-text: #fff;
+
+  --shadow-primary: 0 2px 4px rgba(0,0,0,0.05);
+  --shadow-calendar: 0 6px 12px rgba(0, 0, 0, 0.07);
+  --shadow-modal: 0 5px 15px rgba(0,0,0,0.2);
+  --shadow-toast: 0 4px 12px rgba(0,0,0,0.15);
+  --shadow-chip: 0 1px 2px rgba(0,0,0,0.1);
+  --text-shadow-chip: 0 1px 1px rgba(0,0,0,0.2);
+
+
+  --time-label-width: 60px; 
+  --time-slot-height: 90px; /* Increased cell height */
+
+  /* Lesson Cell Indicators - Light Mode */
+  --lesson-chip-paid-bg: #27ae60;
+  --lesson-chip-paid-text: #ffffff;
+  --lesson-chip-recurring-bg: #007bff;
+  --lesson-chip-recurring-text: #ffffff;
+  --lesson-chip-tips-bg: #e67e22;
+  --lesson-chip-tips-text: #ffffff;
+  --lesson-student-name-bg: rgba(0,0,0,0.04);
+  --lesson-student-name-text: var(--text-primary);
+  --lesson-price-text: var(--text-secondary);
+  --lesson-time-duration-text: var(--text-secondary);
+}
+
+body.dark-mode {
+  --bg-primary: #121212; 
+  --bg-secondary: #1e1e1e;
+  --bg-tertiary: #2a2a2a;
+  --bg-accent: #0d6efd; 
+  --bg-modal-backdrop: rgba(0, 0, 0, 0.8);
+  --bg-modal: #252525;
+  --bg-input: #2c2c2c;
+  --bg-input-disabled: #3a3a3a;
+  --bg-toast-default: #e0e0e0;
+  --bg-toast-success: #3dc67c;
+  --bg-toast-error: #ff6b6b;
+  --bg-toast-info: #4dabf7;
+
+  --text-primary: #e0e0e0;
+  --text-secondary: #b0b0b0;
+  --text-accent: #80bfff; 
+  --text-header: #ffffff;
+  --text-nav-button: #e0e0e0;
+  --text-nav-button-active: #ffffff; 
+  --text-button-primary: #ffffff;
+  --text-button-secondary: #e0e0e0;
+  --text-button-danger: #ffffff;
+  --text-toast: #121212; 
+  --text-placeholder: #757575;
+  --text-disabled: #5e5e5e;
+  --text-on-accent-bg: #ffffff;
+
+  --border-primary: #3a3a3a;
+  --border-secondary: #4a4a4a;
+  --border-input: #505050;
+  --border-input-focus: #80bfff;
+  --border-drag-active: #80bfff;
+
+  --button-primary-bg: var(--bg-accent);
+  --button-primary-hover-bg: #0b5ed7;
+  --button-secondary-bg: #3a3a3a;
+  --button-secondary-hover-bg: #4a4a4a;
+  --button-danger-bg: #d9534f;
+  --button-danger-hover-bg: #c9302c;
+  --button-add-weekly-bg: #5cb85c;
+  --button-add-weekly-hover-bg: #4cae4c;
+  --button-topup-bg: #5bc0de;
+  --button-topup-hover-bg: #31b0d5;
+  --button-view-toggle-bg: #3a3a3a;
+  --button-view-toggle-active-bg: var(--bg-accent);
+  --button-view-toggle-text: var(--text-primary);
+  --button-view-toggle-active-text: #fff;
+
+  --shadow-primary: 0 2px 4px rgba(0,0,0,0.25);
+  --shadow-calendar: 0 6px 12px rgba(0,0,0,0.35);
+  --shadow-modal: 0 5px 15px rgba(0,0,0,0.5);
+  --shadow-toast: 0 4px 12px rgba(0,0,0,0.35);
+  --shadow-chip: 0 1px 2px rgba(0,0,0,0.3);
+  --text-shadow-chip: 0 1px 1px rgba(0,0,0,0.4);
+
+  /* Lesson Cell Indicators - Dark Mode */
+  --lesson-chip-paid-bg: #2ecc71; /* Slightly brighter green for dark mode */
+  --lesson-chip-paid-text: #ffffff;
+  --lesson-chip-recurring-bg: #3498db; /* Slightly brighter blue */
+  --lesson-chip-recurring-text: #ffffff;
+  --lesson-chip-tips-bg: #f39c12; /* Slightly brighter orange */
+  --lesson-chip-tips-text: #ffffff;
+  --lesson-student-name-bg: rgba(255,255,255,0.08);
+  --lesson-student-name-text: var(--text-primary);
+  --lesson-price-text: var(--text-secondary);
+  --lesson-time-duration-text: var(--text-secondary);
+}
+
+/* General Styles */
+*, *::before, *::after {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  font-family: var(--font-primary);
+  background-color: var(--bg-primary); 
+  color: var(--text-primary);
+  line-height: 1.6;
+  font-size: 16px;
+  transition: background-color 0.3s ease, color 0.3s ease;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Footer */
+footer {
+  text-align: center;
+  padding: 1.5rem;
+  background-color: var(--bg-tertiary);
+  color: var(--text-secondary);
+  font-size: 0.85rem;
+  border-top: 1px solid var(--border-primary);
+  margin-top: auto; 
+}
+
+/* Responsive Adjustments */
+@media (max-width: 768px) {
+  body {
+    font-size: 15px;
+  }
+  main {
+    padding: 1rem;
+  }
+}
+
+@media (max-width: 480px) {
+  body {
+    font-size: 14px;
+  }
+}
