@@ -1,0 +1,85 @@
+/**
+ * @license
+ * SPDX-License-Identifier: Apache-2.0
+*/
+
+.tutor-logo {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  transition: transform 0.2s ease;
+}
+
+.tutor-logo:hover {
+  transform: scale(1.02);
+}
+
+.tutor-logo svg {
+  flex-shrink: 0;
+  transition: filter 0.2s ease;
+}
+
+.tutor-logo .logo-text {
+  font-family: var(--font-primary);
+  font-weight: 600;
+  color: var(--text-header);
+  white-space: nowrap;
+  text-decoration: none;
+  transition: color 0.2s ease;
+}
+
+/* Dark mode adjustments */
+body.dark-mode .tutor-logo .logo-text {
+  color: var(--text-header);
+}
+
+/* Responsive logo sizes */
+@media (max-width: 768px) {
+  .header-logo .tutor-logo {
+    gap: 0.3rem;
+  }
+
+  .header-logo .logo-text {
+    font-size: 0.9rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .header-logo .tutor-logo {
+    gap: 0.25rem;
+  }
+
+  .header-logo .logo-text {
+    font-size: 0.8rem;
+  }
+}
+
+/* Logo in header */
+.header-logo {
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+  text-decoration: none;
+  color: inherit;
+}
+
+.header-logo:hover {
+  text-decoration: none;
+  color: inherit;
+}
+
+/* Animation for logo on app load */
+@keyframes logoFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.tutor-logo {
+  animation: logoFadeIn 0.6s ease-out;
+}

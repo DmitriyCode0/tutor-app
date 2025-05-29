@@ -22,6 +22,11 @@ header {
   align-items: center;
   max-width: 1300px; /* Consistent max-width */
   margin: 0 auto;
+  gap: 1rem;
+}
+
+.header-logo {
+  flex-shrink: 0;
 }
 
 #app-main-heading {
@@ -29,6 +34,8 @@ header {
   margin: 0;
   font-size: 1.8rem;
   font-weight: 600;
+  flex: 1;
+  text-align: center;
 }
 
 .settings-button {
@@ -116,6 +123,9 @@ main {
   header {
     padding: 0.75rem 1rem;
   }
+  .header-content {
+    gap: 0.5rem;
+  }
   #app-main-heading {
     font-size: 1.5rem;
   }
@@ -149,6 +159,9 @@ main {
 }
 
 @media (max-width: 480px) {
+  .header-content {
+    gap: 0.25rem;
+  }
   #app-main-heading {
     font-size: 1.3rem;
   }

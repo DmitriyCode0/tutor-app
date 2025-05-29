@@ -48,6 +48,7 @@ import ToastNotification from "./components/ToastNotification";
 import WeeklyCalendar from "./components/WeeklyCalendar";
 import StatisticsPage from "./pages/StatisticsPage";
 import StudentsPage from "./pages/StudentsPage";
+import TutorLogo from "./components/TutorLogo";
 
 function App() {
   const { isMobile, isTouch } = useResponsive();
@@ -1170,6 +1171,9 @@ function App() {
     <div className={`app-container ${isMobile ? "mobile-app" : "desktop-app"}`}>
       <header>
         <div className="header-content">
+          <div className="header-logo">
+            <TutorLogo size={isMobile ? 28 : 36} showText={!isMobile} />
+          </div>
           <h1 id="app-main-heading">
             {isMobile ? "Tutor Schedule" : "Weekly Tutoring Schedule"}
           </h1>
