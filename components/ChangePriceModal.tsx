@@ -1,19 +1,28 @@
 /**
  * @license
  * SPDX-License-Identifier: Apache-2.0
-*/
-import React, { useState, useEffect } from 'react';
-import { ChangePriceModalProps } from '../types';
+ */
+import React, { useState, useEffect } from "react";
+import { ChangePriceModalProps } from "../types";
+import { getCurrencyLabel } from "../utils/currencyUtils";
 
-function ChangePriceModal({ isOpen, onClose, onChangePrice, currentPrice, isRecurring, lessonName }: ChangePriceModalProps) {
-  const [newPrice, setNewPrice] = useState<string>('');
-  const [scope, setScope] = useState<'single' | 'future'>('single');
+function ChangePriceModal({
+  isOpen,
+  onClose,
+  onChangePrice,
+  currentPrice,
+  isRecurring,
+  lessonName,
+  currency,
+}: ChangePriceModalProps) {
+  const [newPrice, setNewPrice] = useState<string>("");
+  const [scope, setScope] = useState<"single" | "future">("single");
 
   useEffect(() => {
     if (isOpen) {
       setNewPrice(currentPrice.toString());
-      setScope('single'); 
-      const priceInput = document.getElementById('newPriceInput');
+      setScope("single");
+      const priceInput = document.getElementById("newPriceInput");
       if (priceInput) {
         priceInput.focus();
       }
@@ -24,21 +33,31 @@ function ChangePriceModal({ isOpen, onClose, onChangePrice, currentPrice, isRecu
     event.preventDefault();
     const priceNumber = parseFloat(newPrice);
     if (isNaN(priceNumber) || priceNumber <= 0) {
-      alert('Please enter a valid positive price.');
+      alert("Please enter a valid positive price.");
       return;
     }
-    onChangePrice(priceNumber, isRecurring ? scope : 'single');
+    onChangePrice(priceNumber, isRecurring ? scope : "single");
   };
-  
+
   if (!isOpen) return null;
 
   return (
-    <div className="modal-backdrop" onClick={onClose} role="dialog" aria-modal="true" aria-labelledby="change-price-modal-title">
+    <div
+      className="modal-backdrop"
+      onClick={onClose}
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="change-price-modal-title"
+    >
       <div className="modal-content" onClick={(e) => e.stopPropagation()}>
-        <h3 id="change-price-modal-title" className="modal-header">Change Price for {lessonName}</h3>
+        <h3 id="change-price-modal-title" className="modal-header">
+          Change Price for {lessonName}
+        </h3>
         <form onSubmit={handleSubmit} className="modal-form">
           <div className="form-group">
-            <label htmlFor="newPriceInput">New Price ($):</label>
+            <label htmlFor="newPriceInput">
+              New Price {getCurrencyLabel(currency)}:
+            </label>
             <input
               id="newPriceInput"
               type="number"
@@ -54,18 +73,44 @@ function ChangePriceModal({ isOpen, onClose, onChangePrice, currentPrice, isRecu
             <div className="form-group">
               <label>Apply change to:</label>
               <div>
-                <input type="radio" id="scopeSinglePrice" name="priceScope" value="single" checked={scope === 'single'} onChange={() => setScope('single')} />
-                <label htmlFor="scopeSinglePrice" className="radio-label">This lesson only</label>
+                <input
+                  type="radio"
+                  id="scopeSinglePrice"
+                  name="priceScope"
+                  value="single"
+                  checked={scope === "single"}
+                  onChange={() => setScope("single")}
+                />
+                <label htmlFor="scopeSinglePrice" className="radio-label">
+                  This lesson only
+                </label>
               </div>
               <div>
-                <input type="radio" id="scopeFuturePrice" name="priceScope" value="future" checked={scope === 'future'} onChange={() => setScope('future')} />
-                <label htmlFor="scopeFuturePrice" className="radio-label">This and all future lessons in series</label>
+                <input
+                  type="radio"
+                  id="scopeFuturePrice"
+                  name="priceScope"
+                  value="future"
+                  checked={scope === "future"}
+                  onChange={() => setScope("future")}
+                />
+                <label htmlFor="scopeFuturePrice" className="radio-label">
+                  This and all future lessons in series
+                </label>
               </div>
             </div>
           )}
           <div className="modal-actions">
-            <button type="submit" className="button-primary">Save Price</button>
-            <button type="button" onClick={onClose} className="button-secondary">Cancel</button>
+            <button type="submit" className="button-primary">
+              Save Price
+            </button>
+            <button
+              type="button"
+              onClick={onClose}
+              className="button-secondary"
+            >
+              Cancel
+            </button>
           </div>
         </form>
       </div>

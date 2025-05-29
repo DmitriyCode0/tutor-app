@@ -5,19 +5,25 @@
 
 .calendar-grid-wrapper {
   overflow-x: auto;
+  overflow-y: auto;
+  max-height: 80vh;
   background-color: var(--bg-secondary);
   border: 1px solid var(--border-primary);
   border-radius: 8px;
   box-shadow: var(--shadow-calendar);
-  margin-top: 1rem; /* If calendar controls are outside */
+  margin-top: 1rem;
+  position: relative;
 }
+
 .calendar-grid {
   display: grid;
   /* min-width helps with horizontal scroll before content shrinks too much */
   /* Time label width + 7 days * some reasonable minimum width for a day column */
-  min-width: calc(var(--time-label-width) + 7 * 100px); 
+  min-width: calc(var(--time-label-width) + 7 * 100px);
 }
-.grid-cell { /* Base styles for all grid cells */
+
+.grid-cell {
+  /* Base styles for all grid cells */
   border-right: 1px solid var(--border-secondary);
   border-bottom: 1px solid var(--border-secondary);
   padding: 0; /* Padding will be in TimeSlotCell or specific header cells */
@@ -28,14 +34,15 @@
   text-align: center;
   font-size: 0.85rem;
 }
+
 /* Remove right border from the last column of cells in each row effectively */
-.calendar-grid > div:nth-child(8n) { /* Every 8th element in the grid (time label + 7 days) */
-  /* This selector targets the last day cell in each row of days if grid is flat */
-  /* More robust if applied to TimeSlotCell directly if it's the last in its row */
-}
+/* .calendar-grid > div:nth-child(8n) {
+  Every 8th element in the grid (time label + 7 days)
+  This selector targets the last day cell in each row of days if grid is flat
+  More robust if applied to TimeSlotCell directly if it's the last in its row
+} */
 /* Remove bottom border from the cells in the last row */
 /* This is tricky with dynamic rows, often handled by the wrapper or individual cells knowing their position */
-
 
 .header-cell {
   background-color: var(--bg-tertiary);
@@ -48,9 +55,7 @@
   padding: 0.5rem;
 }
 
-.day-header-cell {
-  /* Specific styles for day headers if different from generic header-cell */
-}
+/* Removed empty .day-header-cell ruleset */
 
 .time-label-cell {
   background-color: var(--bg-tertiary);
@@ -58,7 +63,7 @@
   color: var(--text-secondary);
   position: sticky;
   left: 0;
-  z-index: 5; 
+  z-index: 5;
   width: var(--time-label-width);
   min-width: var(--time-label-width); /* Ensure it doesn't shrink */
   height: var(--time-slot-height); /* Match time slot height */
@@ -66,33 +71,117 @@
 }
 
 .corner-cell {
-  z-index: 15; 
+  z-index: 15;
   position: sticky;
   left: 0;
   top: 0; /* Important for stickiness */
   width: var(--time-label-width);
   height: 50px; /* Match day header height */
 }
+
 .timezone-info {
   font-size: 0.7rem;
   color: var(--text-secondary);
 }
+
 .today-header {
   background-color: var(--bg-accent) !important;
   color: var(--text-accent) !important;
   font-weight: bold;
 }
 
+/* --- NOW LINE INDICATOR --- */
+.now-line {
+  position: absolute;
+  height: 2px;
+  pointer-events: none;
+  border-radius: 1px;
+  z-index: 20;
+  transition: top 0.2s linear, left 0.2s linear, width 0.2s linear;
+}
+
+.now-line.today {
+  background: #ff4444;
+  box-shadow: 0 0 6px 0 rgba(255, 68, 68, 0.6);
+  z-index: 21;
+  height: 3px;
+}
+
+.now-line.grey {
+  background: #999999;
+  opacity: 0.4;
+  height: 1px;
+  z-index: 19;
+}
+
+/* Sticky header for day headers */
+.sticky-header {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  background: var(--bg-tertiary, #222);
+  box-shadow: 0 2px 4px -2px rgba(0, 0, 0, 0.08);
+}
+
+/* Optionally, make the corner cell sticky as well */
+.corner-cell.sticky-header {
+  left: 0;
+  z-index: 110;
+  background: var(--bg-tertiary, #222);
+}
+
+.day-header-cell.sticky-header {
+  z-index: 105;
+  background: var(--bg-tertiary, #222);
+}
+
 /* Responsive Adjustments for WeeklyCalendar.css */
 @media (max-width: 768px) {
-  .grid-cell { /* Base */
+  .calendar-grid-wrapper {
+    max-height: calc(100vh - 200px); /* Adjust for mobile viewport */
+    margin-top: 0.5rem;
+    border-radius: 6px;
+  }
+
+  .mobile-calendar .calendar-grid {
+    /* Use mobile-specific variables */
+    min-width: calc(
+      var(--mobile-time-label-width) + 3 * 120px
+    ); /* 3 days * wider columns */
+  }
+
+  .mobile-calendar .time-label-cell {
+    width: var(--mobile-time-label-width);
+    min-width: var(--mobile-time-label-width);
+    font-size: 0.7rem;
+    padding: 0.25rem 0;
+  }
+
+  .mobile-calendar .corner-cell {
+    width: var(--mobile-time-label-width);
+    height: 35px;
+    font-size: 0.65rem;
+  }
+
+  .mobile-calendar .header-cell {
+    height: 35px;
+    padding: 0.25rem;
+    font-size: 0.8rem;
+  }
+
+  .mobile-calendar .time-slot-cell {
+    height: var(--mobile-time-slot-height);
+    min-height: var(--mobile-time-slot-height);
+  }
+
+  .grid-cell {
     font-size: 0.75rem;
   }
-  .header-cell { /* Day headers */
+  .header-cell {
     height: 40px;
     padding: 0.3rem;
   }
-   .time-label-cell {
+  .time-label-cell {
     font-size: 0.7rem;
   }
   .corner-cell {
@@ -101,6 +190,25 @@
 }
 
 @media (max-width: 480px) {
+  .calendar-grid-wrapper {
+    margin-top: 0.25rem;
+    border-radius: 4px;
+  }
+
+  .mobile-calendar .time-label-cell {
+    font-size: 0.65rem;
+  }
+
+  .mobile-calendar .header-cell {
+    font-size: 0.75rem;
+    height: 30px;
+  }
+
+  .mobile-calendar .corner-cell {
+    height: 30px;
+    font-size: 0.6rem;
+  }
+
   .grid-cell {
     font-size: 0.7rem;
   }

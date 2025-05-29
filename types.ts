@@ -6,9 +6,16 @@
 import { DragEvent } from "react";
 
 // --- App Settings ---
+export interface Currency {
+  code: string;
+  symbol: string;
+  name: string;
+}
+
 export interface AppSettings {
   startOfWeekDay: 0 | 1; // 0 for Sunday, 1 for Monday
   darkMode: boolean;
+  currency: Currency;
 }
 
 // --- Core Data Interfaces ---
@@ -57,6 +64,7 @@ export interface LessonModalProps {
   selectedDate: Date | null;
   selectedHourProp: string | null;
   students: Student[];
+  currency: Currency;
 }
 
 export interface ViewLessonModalProps {
@@ -73,6 +81,7 @@ export interface ViewLessonModalProps {
   onOpenChangeTimeDuration: (lesson: Lesson) => void;
   lesson: Lesson | null;
   students: Student[];
+  currency: Currency;
 }
 
 export interface AddTipsModalProps {
@@ -81,6 +90,7 @@ export interface AddTipsModalProps {
   onAddTip: (tipAmount: number) => void;
   currentTips: number;
   lessonName: string;
+  currency: Currency;
 }
 
 export interface ChangePriceModalProps {
@@ -90,6 +100,7 @@ export interface ChangePriceModalProps {
   currentPrice: number;
   isRecurring: boolean;
   lessonName: string;
+  currency: Currency;
 }
 
 export interface ChangeTimeDurationModalProps {
@@ -121,6 +132,7 @@ export interface TopUpModalProps {
   onClose: () => void;
   onTopUp: (amount: number) => void;
   studentName: string;
+  currency: Currency;
 }
 
 export interface ReportConfigModalProps {
@@ -136,6 +148,7 @@ export interface ReportViewModalProps {
   reportData: { date: string; hour: string; price: number; duration: number }[];
   studentName: string;
   lessonCount: number;
+  currency: Currency;
 }
 
 export interface SettingsModalProps {
@@ -145,6 +158,8 @@ export interface SettingsModalProps {
   onUpdateStartDay: (day: 0 | 1) => void;
   currentDarkMode: boolean;
   onUpdateDarkMode: (enabled: boolean) => void;
+  currentCurrency: Currency;
+  onUpdateCurrency: (currency: Currency) => void;
 }
 
 // --- UI Component Props Interfaces ---
@@ -168,11 +183,24 @@ export interface TimeSlotCellProps {
   onClick: (lesson?: Lesson) => void;
   isToday: boolean;
   onDragStartLesson?: (lessonId: string) => void;
-  onDropOnSlot: (event: React.DragEvent, date: Date, hour: string) => void;
-  onDragOverSlot: (event: React.DragEvent) => void;
-  onDragEnterSlot: (event: React.DragEvent, date: Date, hour: string) => void;
-  onDragLeaveSlot: (event: React.DragEvent) => void;
+  onDropOnSlot?: (event: React.DragEvent, date: Date, hour: string) => void;
+  onDragOverSlot?: (event: React.DragEvent) => void;
+  onDragEnterSlot?: (event: React.DragEvent, date: Date, hour: string) => void;
+  onDragLeaveSlot?: (event: React.DragEvent) => void;
   isDragOverTarget: boolean;
+  draggedLessonDuration?: number; // Duration of the lesson being dragged
+  currency: Currency;
+  touchDragHandlers?: {
+    getTouchEventHandlers: (
+      lessonId: string,
+      targetDate: Date,
+      targetHour: string
+    ) => {
+      onTouchStart: (e: React.TouchEvent) => void;
+      onTouchMove: (e: React.TouchEvent) => void;
+      onTouchEnd: (e: React.TouchEvent) => void;
+    };
+  };
 }
 
 export interface WeeklyCalendarProps {
@@ -181,6 +209,7 @@ export interface WeeklyCalendarProps {
   onTimeSlotClick: (date: Date, hour: string, lesson?: Lesson) => void;
   viewStartDate: Date;
   draggedLessonId: string | null;
+  draggedLessonDuration: number;
   dragOverSlotInfo: { dateKey: string; hour: string } | null;
   onDragStartLesson: (lessonId: string) => void;
   onDropOnSlot: (event: React.DragEvent, date: Date, hour: string) => void;
@@ -188,12 +217,15 @@ export interface WeeklyCalendarProps {
   onDragEnterSlot: (event: React.DragEvent, date: Date, hour: string) => void;
   onDragLeaveSlot: (event: React.DragEvent) => void;
   startOfWeekDay: 0 | 1;
+  now: Date;
+  currency: Currency;
 }
 
 export interface StatisticsPageProps {
   lessons: Lesson[];
   students: Student[];
   startOfWeekDay: 0 | 1;
+  currency: Currency;
 }
 
 export interface StudentsPageProps {
@@ -203,4 +235,5 @@ export interface StudentsPageProps {
   onOpenTopUpModal: (student: Student) => void;
   onOpenReportConfigModal: (student: Student) => void;
   startOfWeekDay: 0 | 1;
+  currency: Currency;
 }

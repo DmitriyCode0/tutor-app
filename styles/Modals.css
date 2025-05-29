@@ -48,48 +48,47 @@
   font-weight: 500;
   margin-right: 0.5em;
 }
-.view-lesson-details em { /* For "(This is a recurring lesson)" */
-    display: block;
-    text-align: center;
-    margin-top: 1rem;
-    font-size: 0.9rem;
-    color: var(--text-placeholder);
+.view-lesson-details em {
+  /* For "(This is a recurring lesson)" */
+  display: block;
+  text-align: center;
+  margin-top: 1rem;
+  font-size: 0.9rem;
+  color: var(--text-placeholder);
 }
-
 
 /* Report View Modal Specifics */
 .report-view-modal-content {
-    max-width: 650px; /* Wider for report lists */
+  max-width: 650px; /* Wider for report lists */
 }
 .report-list {
-    list-style: none;
-    padding: 0;
-    max-height: 400px; /* Limit height of the list */
-    overflow-y: auto;
-    margin-bottom: 1rem;
+  list-style: none;
+  padding: 0;
+  max-height: 400px; /* Limit height of the list */
+  overflow-y: auto;
+  margin-bottom: 1rem;
 }
 .report-item {
-    padding: 0.75rem 0.5rem;
-    border-bottom: 1px solid var(--border-primary);
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    font-size: 0.9rem;
-    gap: 1rem; /* Space between date/time and price */
+  padding: 0.75rem 0.5rem;
+  border-bottom: 1px solid var(--border-primary);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 0.9rem;
+  gap: 1rem; /* Space between date/time and price */
 }
 .report-item:last-child {
-    border-bottom: none;
+  border-bottom: none;
 }
 .report-item span:first-child {
-    color: var(--text-primary);
-    flex-grow: 1;
+  color: var(--text-primary);
+  flex-grow: 1;
 }
 .report-item span:last-child {
-    color: var(--text-secondary);
-    font-weight: 500;
-    white-space: nowrap;
+  color: var(--text-secondary);
+  font-weight: 500;
+  white-space: nowrap;
 }
-
 
 /* Responsive Adjustments for Modals.css */
 @media (max-width: 768px) {
@@ -97,11 +96,52 @@
     padding: 1rem 1.2rem;
     margin: 0 0.5rem; /* Ensure some space from screen edges */
   }
-  .modal-header { 
-    font-size: 1.3rem; 
+  .modal-header {
+    font-size: 1.3rem;
     margin-bottom: 1rem;
   }
   .view-lesson-details p {
+    font-size: 0.9rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .modal-backdrop {
+    padding: 0.5rem;
+    align-items: flex-start; /* Align to top on very small screens */
+    padding-top: 2rem;
+  }
+
+  .modal-content {
+    padding: 1rem;
+    max-height: 85vh;
+    width: 100%;
+    margin: 0;
+  }
+
+  .modal-header {
+    font-size: 1.2rem;
+    margin-bottom: 0.75rem;
+  }
+
+  .view-lesson-details p {
+    font-size: 0.85rem;
+    margin: 0.4rem 0;
+  }
+
+  .report-view-modal-content {
+    max-width: 100%;
+  }
+
+  .report-item {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.25rem;
+    padding: 0.5rem;
+  }
+
+  .report-item span:last-child {
+    align-self: flex-end;
     font-size: 0.9rem;
   }
 }

@@ -4,15 +4,21 @@
 */
 
 :root {
-  --font-primary: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
-  
+  --font-primary: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+    "Helvetica Neue", Arial, sans-serif;
+
   /* Light Mode Colors */
-  --bg-primary: #f0f4f8; 
-  --bg-secondary: #ffffff; 
-  --bg-tertiary: #e9eef2; 
-  --bg-accent: #e8f0fe; 
-  --bg-modal-backdrop: rgba(0, 0, 0, 0.75); /* Increased opacity for light mode */
-  --bg-modal: #ffffff; 
+  --bg-primary: #f0f4f8;
+  --bg-secondary: #ffffff;
+  --bg-tertiary: #e9eef2;
+  --bg-accent: #e8f0fe;
+  --bg-modal-backdrop: rgba(
+    0,
+    0,
+    0,
+    0.75
+  ); /* Increased opacity for light mode */
+  --bg-modal: #ffffff;
   --bg-input: #ffffff;
   --bg-input-disabled: #f0f0f0;
   --bg-toast-default: #333333;
@@ -20,10 +26,26 @@
   --bg-toast-error: #e74c3c;
   --bg-toast-info: #2980b9;
 
-  --text-primary: #2c3e50; 
-  --text-secondary: #5f6368; 
-  --text-accent: #1a73e8;   
-  --text-header: #2c3e50;   
+  /* Grid and Table Lines */
+  --grid-line-horizontal: rgba(
+    210,
+    216,
+    222,
+    0.85
+  ); /* Darker horizontal lines */
+  --grid-line-vertical: rgba(210, 216, 222, 0.85); /* Vertical lines */
+  --grid-line-half-hour: rgba(
+    210,
+    216,
+    222,
+    0.5
+  ); /* Lighter half-hour demarcation */
+  --grid-highlight: rgba(26, 115, 232, 0.1); /* Hour highlight on hover */
+
+  --text-primary: #2c3e50;
+  --text-secondary: #5f6368;
+  --text-accent: #1a73e8;
+  --text-header: #2c3e50;
   --text-nav-button: #2c3e50;
   --text-nav-button-active: #ffffff;
   --text-button-primary: #ffffff;
@@ -32,10 +54,10 @@
   --text-toast: #ffffff;
   --text-placeholder: #7f8c8d;
   --text-disabled: #95a5a6;
-  --text-on-accent-bg: #ffffff; 
+  --text-on-accent-bg: #ffffff;
 
-  --border-primary: #dde3e8; 
-  --border-secondary: #b0b8c0; 
+  --border-primary: #dde3e8;
+  --border-secondary: #b0b8c0;
   --border-input: #ced4da;
   --border-input-focus: #4a90e2;
   --border-drag-active: #4a90e2;
@@ -48,23 +70,31 @@
   --button-danger-hover-bg: #c0392b;
   --button-add-weekly-bg: #16a085;
   --button-add-weekly-hover-bg: #117e68;
-  --button-topup-bg: #4CAF50;
+  --button-topup-bg: #4caf50;
   --button-topup-hover-bg: #45a049;
   --button-view-toggle-bg: #e0e0e0;
   --button-view-toggle-active-bg: #2c3e50;
   --button-view-toggle-text: #333;
   --button-view-toggle-active-text: #fff;
 
-  --shadow-primary: 0 2px 4px rgba(0,0,0,0.05);
+  --shadow-primary: 0 2px 4px rgba(0, 0, 0, 0.05);
   --shadow-calendar: 0 6px 12px rgba(0, 0, 0, 0.07);
-  --shadow-modal: 0 5px 15px rgba(0,0,0,0.2);
-  --shadow-toast: 0 4px 12px rgba(0,0,0,0.15);
-  --shadow-chip: 0 1px 2px rgba(0,0,0,0.1);
-  --text-shadow-chip: 0 1px 1px rgba(0,0,0,0.2);
+  --shadow-modal: 0 5px 15px rgba(0, 0, 0, 0.2);
+  --shadow-toast: 0 4px 12px rgba(0, 0, 0, 0.15);
+  --shadow-chip: 0 1px 2px rgba(0, 0, 0, 0.1);
+  --text-shadow-chip: 0 1px 1px rgba(0, 0, 0, 0.2);
 
+  /* Grid lines */
+  --grid-line-color: rgba(0, 0, 0, 0.04);
+  --grid-line-color-dark: rgba(255, 255, 255, 0.04);
 
-  --time-label-width: 60px; 
+  --time-label-width: 60px;
   --time-slot-height: 90px; /* Increased cell height */
+
+  /* Mobile responsive variables */
+  --mobile-time-label-width: 40px;
+  --mobile-time-slot-height: 70px;
+  --mobile-font-size-base: 14px;
 
   /* Lesson Cell Indicators - Light Mode */
   --lesson-chip-paid-bg: #27ae60;
@@ -73,17 +103,17 @@
   --lesson-chip-recurring-text: #ffffff;
   --lesson-chip-tips-bg: #e67e22;
   --lesson-chip-tips-text: #ffffff;
-  --lesson-student-name-bg: rgba(0,0,0,0.04);
+  --lesson-student-name-bg: rgba(0, 0, 0, 0.04);
   --lesson-student-name-text: var(--text-primary);
   --lesson-price-text: var(--text-secondary);
   --lesson-time-duration-text: var(--text-secondary);
 }
 
 body.dark-mode {
-  --bg-primary: #121212; 
+  --bg-primary: #121212;
   --bg-secondary: #1e1e1e;
   --bg-tertiary: #2a2a2a;
-  --bg-accent: #0d6efd; 
+  --bg-accent: #0d6efd;
   --bg-modal-backdrop: rgba(0, 0, 0, 0.8);
   --bg-modal: #252525;
   --bg-input: #2c2c2c;
@@ -95,14 +125,14 @@ body.dark-mode {
 
   --text-primary: #e0e0e0;
   --text-secondary: #b0b0b0;
-  --text-accent: #80bfff; 
+  --text-accent: #80bfff;
   --text-header: #ffffff;
   --text-nav-button: #e0e0e0;
-  --text-nav-button-active: #ffffff; 
+  --text-nav-button-active: #ffffff;
   --text-button-primary: #ffffff;
   --text-button-secondary: #e0e0e0;
   --text-button-danger: #ffffff;
-  --text-toast: #121212; 
+  --text-toast: #121212;
   --text-placeholder: #757575;
   --text-disabled: #5e5e5e;
   --text-on-accent-bg: #ffffff;
@@ -128,12 +158,12 @@ body.dark-mode {
   --button-view-toggle-text: var(--text-primary);
   --button-view-toggle-active-text: #fff;
 
-  --shadow-primary: 0 2px 4px rgba(0,0,0,0.25);
-  --shadow-calendar: 0 6px 12px rgba(0,0,0,0.35);
-  --shadow-modal: 0 5px 15px rgba(0,0,0,0.5);
-  --shadow-toast: 0 4px 12px rgba(0,0,0,0.35);
-  --shadow-chip: 0 1px 2px rgba(0,0,0,0.3);
-  --text-shadow-chip: 0 1px 1px rgba(0,0,0,0.4);
+  --shadow-primary: 0 2px 4px rgba(0, 0, 0, 0.25);
+  --shadow-calendar: 0 6px 12px rgba(0, 0, 0, 0.35);
+  --shadow-modal: 0 5px 15px rgba(0, 0, 0, 0.5);
+  --shadow-toast: 0 4px 12px rgba(0, 0, 0, 0.35);
+  --shadow-chip: 0 1px 2px rgba(0, 0, 0, 0.3);
+  --text-shadow-chip: 0 1px 1px rgba(0, 0, 0, 0.4);
 
   /* Lesson Cell Indicators - Dark Mode */
   --lesson-chip-paid-bg: #2ecc71; /* Slightly brighter green for dark mode */
@@ -142,21 +172,23 @@ body.dark-mode {
   --lesson-chip-recurring-text: #ffffff;
   --lesson-chip-tips-bg: #f39c12; /* Slightly brighter orange */
   --lesson-chip-tips-text: #ffffff;
-  --lesson-student-name-bg: rgba(255,255,255,0.08);
+  --lesson-student-name-bg: rgba(255, 255, 255, 0.08);
   --lesson-student-name-text: var(--text-primary);
   --lesson-price-text: var(--text-secondary);
   --lesson-time-duration-text: var(--text-secondary);
 }
 
 /* General Styles */
-*, *::before, *::after {
+*,
+*::before,
+*::after {
   box-sizing: border-box;
 }
 
 body {
   margin: 0;
   font-family: var(--font-primary);
-  background-color: var(--bg-primary); 
+  background-color: var(--bg-primary);
   color: var(--text-primary);
   line-height: 1.6;
   font-size: 16px;
@@ -173,7 +205,7 @@ footer {
   color: var(--text-secondary);
   font-size: 0.85rem;
   border-top: 1px solid var(--border-primary);
-  margin-top: auto; 
+  margin-top: auto;
 }
 
 /* Responsive Adjustments */

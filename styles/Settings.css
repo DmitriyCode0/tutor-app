@@ -5,25 +5,24 @@
 
 /* SettingsModal content styling is largely covered by .modal-content and .modal-form */
 
-.settings-modal-content { 
-  /* If specific styling needed for the settings modal's main content area, add here. */
-  /* For now, it inherits from .modal-content in Modals.css */
+.settings-modal-content {
+  /* Settings modal inherits styling from .modal-content in Modals.css */
 }
 
 /* Dark Mode Switch Styles */
 .form-group label[for="darkModeToggle"] {
-    margin-right: 1rem; /* Space between label and switch */
-    vertical-align: middle;
+  margin-right: 1rem; /* Space between label and switch */
+  vertical-align: middle;
 }
 
 .switch {
   position: relative;
   display: inline-block;
-  width: 50px; 
-  height: 28px; 
+  width: 50px;
+  height: 28px;
   vertical-align: middle;
 }
-.switch input { 
+.switch input {
   opacity: 0;
   width: 0;
   height: 0;
@@ -36,17 +35,17 @@
   right: 0;
   bottom: 0;
   background-color: var(--border-input); /* Use a theme variable */
-  transition: .4s;
+  transition: 0.4s;
 }
 .slider:before {
   position: absolute;
   content: "";
-  height: 20px; 
-  width: 20px; 
+  height: 20px;
+  width: 20px;
   left: 4px;
   bottom: 4px;
   background-color: white; /* Knob color */
-  transition: .4s;
+  transition: 0.4s;
 }
 input:checked + .slider {
   background-color: var(--text-accent); /* Use accent color when checked */
@@ -58,7 +57,7 @@ input:checked + .slider:before {
   transform: translateX(22px); /* Movement of the knob */
 }
 .slider.round {
-  border-radius: 28px; 
+  border-radius: 28px;
 }
 .slider.round:before {
   border-radius: 50%;
@@ -66,5 +65,30 @@ input:checked + .slider:before {
 
 /* Ensure sufficient space for radio buttons and labels in settings */
 .modal-form .form-group div:has(input[type="radio"]) label.radio-label {
-    margin-left: 0.5em; /* More space between radio and its label */
+  margin-left: 0.5em; /* More space between radio and its label */
+}
+
+/* Currency Selection Styles */
+.currency-select {
+  width: 100%;
+  padding: 0.5rem;
+  border: 1px solid var(--border-input);
+  border-radius: 4px;
+  background-color: var(--bg-input);
+  color: var(--text-primary);
+  font-size: 0.9rem;
+  margin-top: 0.5rem;
+}
+
+.currency-select:focus {
+  outline: none;
+  border-color: var(--border-input-focus);
+  box-shadow: 0 0 0 2px rgba(74, 144, 226, 0.2);
+}
+
+/* Ensure sufficient space for currency selector label */
+.form-group label[for="currencySelect"] {
+  margin-bottom: 0.5rem;
+  display: block;
+  font-weight: 500;
 }

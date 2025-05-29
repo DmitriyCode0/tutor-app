@@ -1,3 +1,4 @@
+/* filepath: /Users/dmytroandrushchenko/Desktop/tutor-app (4)/styles/TimeSlotCell.css */
 /**
  * @license
  * SPDX-License-Identifier: Apache-2.0
@@ -5,29 +6,44 @@
 
 .time-slot-cell {
   position: relative;
-  padding: 0; /* Let lesson-details handle padding for content */
-  height: var(--time-slot-height); /* Fixed height from global.css */
-  /* border-right and border-bottom are on .grid-cell in WeeklyCalendar.css */
-  /* border-top and border-left are implicit from previous cells */
-  background-clip: padding-box; 
+  padding: 0;
+  height: var(--time-slot-height);
+  background-clip: padding-box;
   cursor: pointer;
   transition: background-color 0.1s ease;
-  display: flex; /* To center add-lesson-plus or lesson-details */
-  align-items: stretch; /* Make lesson-details fill height */
-  justify-content: stretch; /* Make lesson-details fill width */
+  border-bottom: 1px solid var(--grid-line-horizontal);
+  border-right: 1px solid var(--grid-line-vertical);
+  margin-top: 0;
+  margin-left: 0;
+  min-height: var(--time-slot-height);
 }
-.time-slot-cell:hover:not(:has(.lesson-details)) { /* Hover for empty slots */
-  background-color: var(--bg-tertiary);
+
+/* Add half-hour marker line */
+.time-slot-cell::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 50%;
+  height: 1px;
+  background-color: var(--grid-line-half-hour);
+  pointer-events: none;
+  z-index: 1;
+}
+
+.time-slot-cell:hover:not(:has(.lesson-details)) {
+  /* Hover for empty slots */
+  background-color: var(--grid-highlight);
 }
 
 .today-timeslot {
-  /* No specific outline needed if student color is present and fills cell */
-  /* Could add a subtle inner glow or border if desired for today's empty slots */
-}
-.today-timeslot:not(:has(.lesson-details)) {
-   /* background-color: var(--bg-accent); Optional: highlight today's empty slots slightly */
+  box-shadow: inset 0 0 0 1px var(--text-accent);
 }
 
+.today-timeslot:not(:has(.lesson-details)) {
+  background-color: var(--bg-accent);
+  opacity: 0.9;
+}
 
 .add-lesson-plus {
   font-size: 1.5rem;
@@ -37,20 +53,19 @@
 }
 
 .lesson-details {
-  width: 100%;
-  height: 100%;
   padding: 6px;
-  border-radius: 0; /* No radius, as it fills the cell which has borders */
+  border-radius: 4px;
   display: flex;
   flex-direction: column;
-  justify-content: space-between; 
+  justify-content: flex-start;
   align-items: center;
   text-align: center;
   font-size: 0.8rem;
   overflow: hidden;
-  position: relative; 
   cursor: grab;
-  /* box-shadow: var(--shadow-chip); Removed, cell itself has border */
+  min-height: 0;
+  box-shadow: var(--shadow-chip);
+  z-index: 1;
 }
 .lesson-details:active {
   cursor: grabbing;
@@ -59,11 +74,11 @@
 .lesson-name-chip {
   background-color: var(--lesson-student-name-bg);
   color: var(--lesson-student-name-text);
-  padding: 4px 8px; 
-  border-radius: 12px; 
-  font-size: 0.95rem; 
+  padding: 4px 8px;
+  border-radius: 12px;
+  font-size: 0.95rem;
   font-weight: 600;
-  margin-bottom: 4px; 
+  margin-bottom: 4px;
   display: inline-block; /* So it doesn't take full width */
   max-width: 95%;
   white-space: nowrap;
@@ -72,21 +87,21 @@
   box-shadow: var(--shadow-chip);
 }
 .lesson-price-display {
-  font-size: 0.9rem; 
+  font-size: 0.9rem;
   font-weight: 500;
   color: var(--lesson-price-text);
-  margin-bottom: 4px; 
+  margin-bottom: 4px;
 }
 .lesson-time-duration-display {
-  font-size: 0.8rem; 
+  font-size: 0.8rem;
   color: var(--lesson-time-duration-text);
 }
 
 .lesson-indicator {
   position: absolute;
-  padding: 3px 7px; 
-  border-radius: 10px; 
-  font-size: 0.75rem; 
+  padding: 3px 7px;
+  border-radius: 10px;
+  font-size: 0.75rem;
   font-weight: bold;
   line-height: 1;
   box-shadow: var(--shadow-chip);
@@ -98,7 +113,7 @@
   left: 5px;
   background-color: var(--lesson-chip-paid-bg);
   color: var(--lesson-chip-paid-text);
-  text-shadow: var(--text-shadow-chip); 
+  text-shadow: var(--text-shadow-chip);
 }
 .lesson-recurring-indicator-chip {
   top: 5px;
@@ -113,31 +128,233 @@
   color: var(--lesson-chip-tips-text);
 }
 
-
 .drag-over-active {
   outline: 3px dashed var(--border-drag-active);
   outline-offset: -3px; /* Inside the cell */
-  background-color: var(--bg-accent) !important; /* Ensure it overrides student color */
+  background-color: var(
+    --bg-accent
+  ) !important; /* Ensure it overrides student color */
+}
+
+.drag-time-tooltip {
+  position: absolute;
+  top: -24px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: var(--text-accent);
+  color: white;
+  font-size: 0.75rem;
+  font-weight: bold;
+  padding: 2px 8px;
+  border-radius: 4px;
+  z-index: 50;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+  white-space: nowrap;
+  pointer-events: none;
+  animation: fadeInTooltip 0.2s ease;
+}
+
+@keyframes fadeInTooltip {
+  from {
+    opacity: 0;
+    transform: translateX(-50%) translateY(5px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+  }
+}
+
+.snap-guide {
+  position: absolute;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: var(--text-accent);
+  pointer-events: none;
+  z-index: 30;
+  transition: all 0.15s ease;
+  opacity: 0.7;
+  box-shadow: 0 0 3px rgba(26, 115, 232, 0.7);
+}
+
+.snap-guide:hover,
+.snap-guide:active {
+  opacity: 1;
+  height: 3px;
+}
+
+.snap-guide::after {
+  content: attr(data-time);
+  position: absolute;
+  right: -65px;
+  top: -12px;
+  background: var(--text-accent);
+  color: white;
+  padding: 2px 8px;
+  border-radius: 4px;
+  font-size: 0.8rem;
+  font-weight: 500;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+  white-space: nowrap;
+  letter-spacing: 0.5px;
+}
+
+.snap-guide-top {
+  top: 0;
+}
+
+.snap-guide-middle {
+  top: 50%;
 }
 
 /* Responsive Adjustments for TimeSlotCell.css */
 @media (max-width: 768px) {
-  .lesson-name-chip { 
-    font-size: 0.8rem; 
+  .mobile-calendar .time-slot-cell {
+    height: var(--mobile-time-slot-height);
+    min-height: var(--mobile-time-slot-height);
+  }
+
+  .mobile-calendar .lesson-details {
+    padding: 4px;
+    font-size: 0.7rem;
+  }
+
+  .mobile-calendar .lesson-name-chip {
+    font-size: 0.7rem;
+    padding: 1px 4px;
+    margin-bottom: 1px;
+  }
+
+  .mobile-calendar .lesson-price-display {
+    font-size: 0.65rem;
+    margin-bottom: 1px;
+  }
+
+  .mobile-calendar .lesson-time-duration-display {
+    font-size: 0.6rem;
+  }
+
+  .mobile-calendar .lesson-indicator {
+    font-size: 0.6rem;
+    padding: 1px 3px;
+    bottom: 2px;
+    left: 2px;
+    right: 2px;
+    top: 2px;
+  }
+
+  .mobile-calendar .lesson-recurring-indicator-chip {
+    top: 2px;
+    right: 2px;
+    font-size: 0.55rem;
+    padding: 1px 2px;
+  }
+
+  .mobile-calendar .lesson-tip-amount-chip {
+    bottom: 2px;
+    right: 2px;
+    font-size: 0.55rem;
+  }
+
+  .mobile-calendar .lesson-paid-indicator-chip {
+    bottom: 2px;
+    left: 2px;
+    font-size: 0.55rem;
+  }
+
+  /* Original mobile styles for compatibility */
+  .lesson-name-chip {
+    font-size: 0.8rem;
     padding: 2px 5px;
     margin-bottom: 2px;
   }
-  .lesson-price-display { 
-    font-size: 0.75rem; 
+  .lesson-price-display {
+    font-size: 0.75rem;
     margin-bottom: 2px;
   }
-  .lesson-time-duration-display { font-size: 0.7rem; }
-  .lesson-indicator { 
-    font-size: 0.65rem; 
-    padding: 2px 4px; 
-    bottom: 3px; left: 3px; right: 3px; top: 3px; /* Adjust for smaller cells */
+  .lesson-time-duration-display {
+    font-size: 0.7rem;
   }
-   .lesson-recurring-indicator-chip { top: 3px; right: 3px; }
-   .lesson-tip-amount-chip { bottom: 3px; right: 3px; }
-   .lesson-paid-indicator-chip { bottom: 3px; left: 3px; }
+  .lesson-indicator {
+    font-size: 0.65rem;
+    padding: 2px 4px;
+    bottom: 3px;
+    left: 3px;
+    right: 3px;
+    top: 3px;
+  }
+  .lesson-recurring-indicator-chip {
+    top: 3px;
+    right: 3px;
+  }
+  .lesson-tip-amount-chip {
+    bottom: 3px;
+    right: 3px;
+  }
+  .lesson-paid-indicator-chip {
+    bottom: 3px;
+    left: 3px;
+  }
+}
+
+@media (max-width: 480px) {
+  .mobile-calendar .lesson-details {
+    padding: 3px;
+    font-size: 0.65rem;
+  }
+
+  .mobile-calendar .lesson-name-chip {
+    font-size: 0.65rem;
+    padding: 1px 3px;
+  }
+
+  .mobile-calendar .lesson-price-display {
+    font-size: 0.6rem;
+  }
+
+  .mobile-calendar .lesson-time-duration-display {
+    font-size: 0.55rem;
+  }
+}
+
+/* Touch interaction styles for mobile */
+@media (pointer: coarse) {
+  .lesson-details {
+    /* Better touch targets for mobile */
+    min-height: 44px; /* iOS recommended touch target size */
+    touch-action: none; /* Disable default touch actions during drag */
+    user-select: none; /* Prevent text selection on touch */
+  }
+
+  .lesson-details:active {
+    /* Visual feedback for touch start */
+    transform: scale(1.02);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    z-index: 100;
+    transition: transform 0.1s ease, box-shadow 0.1s ease;
+  }
+
+  .time-slot-cell {
+    /* Improve touch responsiveness */
+    touch-action: pan-y; /* Allow vertical scrolling but capture horizontal gestures */
+  }
+
+  .time-slot-cell:active {
+    background-color: var(--grid-highlight);
+  }
+}
+
+/* Drag feedback for mobile */
+.mobile-calendar .lesson-details[data-dragging="true"] {
+  opacity: 0.8;
+  transform: scale(1.05);
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
+  z-index: 200;
+  transition: none; /* Remove transitions during drag */
+}
+
+.mobile-calendar .time-slot-cell[data-drop-target="true"] {
+  background-color: var(--border-drag-active);
+  opacity: 0.7;
 }

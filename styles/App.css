@@ -111,7 +111,6 @@ main {
   margin: 0 auto;
 }
 
-
 /* Responsive Adjustments for App.css */
 @media (max-width: 768px) {
   header {
@@ -121,7 +120,8 @@ main {
     font-size: 1.5rem;
   }
   .settings-button svg {
-    width: 24px; height: 24px;
+    width: 24px;
+    height: 24px;
   }
   .main-nav {
     gap: 0.25rem;
@@ -137,9 +137,9 @@ main {
     flex-wrap: wrap; /* Allow controls to wrap */
     border-radius: 0; /* Remove rounding if it's not the bottom anymore */
   }
-   .date-range-display {
+  .date-range-display {
     font-size: 0.85rem;
-    flex-basis: 100%; 
+    flex-basis: 100%;
     text-align: center;
     margin-top: 0.5rem;
   }
@@ -149,6 +149,132 @@ main {
 }
 
 @media (max-width: 480px) {
-  #app-main-heading { font-size: 1.3rem; }
-  .nav-button { font-size: 0.8rem; padding: 0.4rem 0.6rem; }
+  #app-main-heading {
+    font-size: 1.3rem;
+  }
+  .nav-button {
+    font-size: 0.8rem;
+    padding: 0.4rem 0.6rem;
+  }
+}
+
+/* Mobile-specific app styles */
+.mobile-app {
+  font-size: 14px; /* Slightly smaller base font size for mobile */
+}
+
+.mobile-nav {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background-color: var(--bg-secondary);
+  border-top: 1px solid var(--border-primary);
+  padding: 0.5rem;
+  box-shadow: 0 -2px 8px rgba(0, 0, 0, 0.1);
+  z-index: 1000;
+  margin: 0;
+  border-radius: 0;
+  max-width: none;
+  display: flex;
+  justify-content: space-around;
+}
+
+.mobile-nav .nav-button {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 0.5rem;
+  font-size: 0.75rem;
+  min-width: 60px;
+  gap: 0.25rem;
+}
+
+.desktop-nav {
+  /* Uses existing main-nav styles */
+  position: relative;
+  bottom: auto;
+  flex-direction: row;
+}
+
+.mobile-controls {
+  padding: 0.5rem 1rem;
+  gap: 0.5rem;
+  flex-wrap: nowrap;
+  justify-content: space-between;
+}
+
+.mobile-controls .control-button {
+  padding: 0.5rem;
+  min-width: 40px;
+  font-size: 1.2rem;
+  font-weight: bold;
+}
+
+.mobile-controls .date-range-display {
+  font-size: 0.8rem;
+  flex: 1;
+  text-align: center;
+  padding: 0 0.5rem;
+}
+
+.desktop-controls {
+  /* Uses existing calendar-controls styles */
+  flex-wrap: wrap;
+}
+
+/* Adjust main content area for mobile bottom navigation */
+.mobile-app main {
+  padding-bottom: 80px; /* Space for bottom navigation */
+}
+
+/* Mobile drag instruction hint */
+.mobile-app .drag-instruction {
+  position: fixed;
+  bottom: 80px; /* Above bottom navigation */
+  left: 50%;
+  transform: translateX(-50%);
+  background: var(--bg-surface);
+  color: var(--text-primary);
+  padding: 8px 16px;
+  border-radius: 20px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+  font-size: 0.8rem;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  z-index: 1000;
+  pointer-events: none;
+}
+
+.mobile-app .drag-instruction.show {
+  opacity: 0.9;
+}
+
+/* Long press indicator for mobile */
+.mobile-calendar .lesson-details::before {
+  content: "⋮⋮";
+  position: absolute;
+  top: 2px;
+  right: 2px;
+  font-size: 0.6rem;
+  color: var(--text-secondary);
+  opacity: 0.6;
+  line-height: 0.8;
+}
+
+/* Pulse animation for touch feedback */
+@keyframes touch-pulse {
+  0% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.05);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+.mobile-calendar .lesson-details:active {
+  animation: touch-pulse 0.2s ease;
 }

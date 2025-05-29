@@ -4,7 +4,7 @@
  */
 import React, { useState, useEffect, useCallback } from "react";
 
-import { AppSettings, Student, Lesson, Toast, Page } from "./types";
+import { AppSettings, Student, Lesson, Toast, Page, Currency } from "./types";
 import {
   DAY_NAMES_FULL,
   DAY_NAMES_SHORT,
@@ -16,6 +16,7 @@ import {
   LOCAL_STORAGE_SETTINGS_KEY,
   NUM_RECURRING_WEEKS_TOTAL,
   NUM_WEEKS_TO_DISPLAY,
+  DEFAULT_CURRENCY,
 } from "./constants";
 import {
   getWeekStartDate,
@@ -30,6 +31,8 @@ import {
   parseTimeToDate,
 } from "./utils/dateUtils";
 import { checkConflict } from "./utils/lessonUtils";
+import { formatCurrency } from "./utils/currencyUtils";
+import { useResponsive } from "./utils/responsiveUtils";
 
 import LessonModal from "./components/LessonModal";
 import ViewLessonModal from "./components/ViewLessonModal";
@@ -47,6 +50,7 @@ import StatisticsPage from "./pages/StatisticsPage";
 import StudentsPage from "./pages/StudentsPage";
 
 function App() {
+  const { isMobile, isTouch } = useResponsive();
   const [currentPage, setCurrentPage] = useState<Page>("calendar");
   const [lessons, setLessonsState] = useState<Lesson[]>([]);
   const [students, setStudentsState] = useState<Student[]>([]);
@@ -66,6 +70,8 @@ function App() {
     useState<Student | null>(null);
 
   const [draggedLessonId, setDraggedLessonId] = useState<string | null>(null);
+  const [draggedLessonDuration, setDraggedLessonDuration] =
+    useState<number>(0.5); // Default to 30min
   const [dragOverSlotInfo, setDragOverSlotInfo] = useState<{
     dateKey: string;
     hour: string;
@@ -121,6 +127,7 @@ function App() {
   const [appSettings, setAppSettingsState] = useState<AppSettings>({
     startOfWeekDay: 0,
     darkMode: false,
+    currency: DEFAULT_CURRENCY,
   });
 
   const [viewStartDate, setViewStartDate] = useState<Date>(() => {
@@ -134,6 +141,12 @@ function App() {
         : 0;
     return getWeekStartDate(new Date(), initialStartDay);
   });
+
+  const [now, setNow] = useState(new Date());
+  useEffect(() => {
+    const interval = setInterval(() => setNow(new Date()), 60000);
+    return () => clearInterval(interval);
+  }, []);
 
   useEffect(() => {
     const savedSettingsRaw = localStorage.getItem(LOCAL_STORAGE_SETTINGS_KEY);
@@ -152,10 +165,15 @@ function App() {
             typeof savedSettings.darkMode === "boolean"
               ? savedSettings.darkMode
               : false,
+          currency: savedSettings.currency || DEFAULT_CURRENCY,
         }));
       } catch (e) {
         console.error("Error parsing settings from LS", e);
-        setAppSettingsState({ startOfWeekDay: 0, darkMode: false });
+        setAppSettingsState({
+          startOfWeekDay: 0,
+          darkMode: false,
+          currency: DEFAULT_CURRENCY,
+        });
       }
     }
   }, []);
@@ -475,9 +493,13 @@ function App() {
         addToast(
           `Error: ${
             studentOfLesson.name
-          } has insufficient balance ($${studentOfLesson.balance.toFixed(
-            2
-          )}) to pay for this $${lessonToToggle.price.toFixed(2)} lesson.`,
+          } has insufficient balance (${formatCurrency(
+            studentOfLesson.balance,
+            appSettings.currency
+          )}) to pay for this ${formatCurrency(
+            lessonToToggle.price,
+            appSettings.currency
+          )} lesson.`,
           "error"
         );
         canProceed = false;
@@ -783,6 +805,11 @@ function App() {
 
   const handleLessonDragStart = (lessonId: string) => {
     setDraggedLessonId(lessonId);
+    // Find the lesson and set its duration for drag preview
+    const lesson = lessons.find((l) => l.id === lessonId);
+    if (lesson) {
+      setDraggedLessonDuration(lesson.duration);
+    }
   };
 
   const handleSlotDragEnter = (
@@ -819,31 +846,52 @@ function App() {
       event.dataTransfer.getData("lessonId") || draggedLessonId;
     setDragOverSlotInfo(null);
     setDraggedLessonId(null);
+    setDraggedLessonDuration(0.5); // Reset to default
 
     if (!lessonIdToMove) return;
 
     const originalLesson = lessons.find((l) => l.id === lessonIdToMove);
     if (!originalLesson) return;
 
-    const newHour = `${slotHour.split(":")[0]}:${
-      originalLesson.hour.split(":")[1]
-    }`;
+    // Use the exact time from the snapped position
+    const newHour = slotHour;
     const newDuration = originalLesson.duration;
     const newDateString = formatDateForStorage(date);
 
     // Use a temporary lessons list excluding the one being moved for conflict check
     const otherLessons = lessons.filter((l) => l.id !== lessonIdToMove);
-    if (
-      checkConflict(
-        lessonIdToMove,
-        newDateString,
-        newHour,
-        newDuration,
-        otherLessons
-      )
-    ) {
+
+    // Check if there's a conflict with existing lessons
+    const conflictLesson = otherLessons.find((l) => {
+      if (l.date !== newDateString) return false;
+
+      // Convert lesson times to comparable minutes
+      const [newHours, newMinutes] = newHour.split(":").map(Number);
+      const newStartMinutes = newHours * 60 + newMinutes;
+      const newEndMinutes = newStartMinutes + newDuration * 60;
+
+      const [existingHours, existingMinutes] = l.hour.split(":").map(Number);
+      const existingStartMinutes = existingHours * 60 + existingMinutes;
+      const existingEndMinutes = existingStartMinutes + l.duration * 60;
+
+      // Check for overlap
+      return (
+        newStartMinutes < existingEndMinutes &&
+        newEndMinutes > existingStartMinutes
+      );
+    });
+
+    if (conflictLesson) {
+      const studentWithConflict = students.find(
+        (s) => s.id === conflictLesson.studentId
+      );
+      const studentName = studentWithConflict
+        ? studentWithConflict.name
+        : "another student";
+      const formattedTime = `${conflictLesson.hour} (${conflictLesson.duration}h)`;
+
       addToast(
-        "Cannot move lesson: Time slot conflicts with an existing lesson.",
+        `Cannot move lesson: Time slot conflicts with ${studentName}'s lesson at ${formattedTime}.`,
         "error"
       );
       return;
@@ -1082,6 +1130,14 @@ function App() {
     addToast(`Dark mode ${enabled ? "enabled" : "disabled"}.`, "success");
   };
 
+  const handleUpdateCurrency = (currency: Currency) => {
+    setAppSettingsState((prev) => ({ ...prev, currency }));
+    addToast(
+      `Currency updated to ${currency.name} (${currency.symbol}).`,
+      "success"
+    );
+  };
+
   const handleOpenChangeTimeDurationModal = (lesson: Lesson) => {
     setLessonForTimeDurationChange(lesson);
     setIsChangeTimeDurationModalOpen(true);
@@ -1111,10 +1167,12 @@ function App() {
   };
 
   return (
-    <div className="app-container">
+    <div className={`app-container ${isMobile ? "mobile-app" : "desktop-app"}`}>
       <header>
         <div className="header-content">
-          <h1 id="app-main-heading">Weekly Tutoring Schedule</h1>
+          <h1 id="app-main-heading">
+            {isMobile ? "Tutor Schedule" : "Weekly Tutoring Schedule"}
+          </h1>
           <button
             onClick={handleOpenSettingsModal}
             className="settings-button"
@@ -1131,7 +1189,10 @@ function App() {
             </svg>
           </button>
         </div>
-        <nav className="main-nav" aria-label="Main navigation">
+        <nav
+          className={`main-nav ${isMobile ? "mobile-nav" : "desktop-nav"}`}
+          aria-label="Main navigation"
+        >
           <button
             onClick={() => navigateTo("calendar")}
             className={`nav-button ${
@@ -1139,7 +1200,7 @@ function App() {
             }`}
             aria-current={currentPage === "calendar" ? "page" : undefined}
           >
-            Calendar
+            {isMobile ? "📅" : "Calendar"}
           </button>
           <button
             onClick={() => navigateTo("statistics")}
@@ -1148,7 +1209,7 @@ function App() {
             }`}
             aria-current={currentPage === "statistics" ? "page" : undefined}
           >
-            Statistics
+            {isMobile ? "📊" : "Statistics"}
           </button>
           <button
             onClick={() => navigateTo("students")}
@@ -1157,19 +1218,23 @@ function App() {
             }`}
             aria-current={currentPage === "students" ? "page" : undefined}
           >
-            Students
+            {isMobile ? "👥" : "Students"}
           </button>
         </nav>
       </header>
 
       {currentPage === "calendar" && (
-        <div className="calendar-controls">
+        <div
+          className={`calendar-controls ${
+            isMobile ? "mobile-controls" : "desktop-controls"
+          }`}
+        >
           <button
             onClick={handlePreviousWeek}
             className="control-button"
             aria-label="Previous period"
           >
-            ‹ Prev
+            {isMobile ? "‹" : "‹ Prev"}
           </button>
           <button
             onClick={handleGoToToday}
@@ -1184,7 +1249,7 @@ function App() {
             className="control-button"
             aria-label="Next period"
           >
-            Next ›
+            {isMobile ? "›" : "Next ›"}
           </button>
         </div>
       )}
@@ -1197,6 +1262,7 @@ function App() {
             onTimeSlotClick={handleTimeSlotClick}
             viewStartDate={viewStartDate}
             draggedLessonId={draggedLessonId}
+            draggedLessonDuration={draggedLessonDuration}
             dragOverSlotInfo={dragOverSlotInfo}
             onDragStartLesson={handleLessonDragStart}
             onDropOnSlot={handleSlotDrop}
@@ -1204,6 +1270,8 @@ function App() {
             onDragEnterSlot={handleSlotDragEnter}
             onDragLeaveSlot={handleSlotDragLeave}
             startOfWeekDay={appSettings.startOfWeekDay}
+            now={now}
+            currency={appSettings.currency}
           />
         )}
         {currentPage === "statistics" && (
@@ -1211,6 +1279,7 @@ function App() {
             lessons={lessons}
             students={students}
             startOfWeekDay={appSettings.startOfWeekDay}
+            currency={appSettings.currency}
           />
         )}
         {currentPage === "students" && (
@@ -1221,6 +1290,7 @@ function App() {
             onOpenTopUpModal={handleOpenTopUpModal}
             onOpenReportConfigModal={handleOpenReportConfigModal}
             startOfWeekDay={appSettings.startOfWeekDay}
+            currency={appSettings.currency}
           />
         )}
       </main>
@@ -1232,6 +1302,7 @@ function App() {
         selectedDate={selectedSlotInfo?.date || null}
         selectedHourProp={selectedSlotInfo?.hour || "12:00"}
         students={students}
+        currency={appSettings.currency}
       />
       <ViewLessonModal
         isOpen={isViewLessonModalOpen}
@@ -1243,6 +1314,7 @@ function App() {
         onOpenAddTips={handleOpenAddTipsModal}
         onOpenChangePrice={handleOpenChangePriceModal}
         onOpenChangeTimeDuration={handleOpenChangeTimeDurationModal}
+        currency={appSettings.currency}
       />
       <AddTipsModal
         isOpen={isAddTipsModalOpen}
@@ -1253,6 +1325,7 @@ function App() {
           students.find((s) => s.id === lessonForTips?.studentId)?.name ||
           "Lesson"
         }
+        currency={appSettings.currency}
       />
       <ChangePriceModal
         isOpen={isChangePriceModalOpen}
@@ -1264,6 +1337,7 @@ function App() {
           students.find((s) => s.id === lessonForPriceChange?.studentId)
             ?.name || "Lesson"
         }
+        currency={appSettings.currency}
       />
       {lessonForTimeDurationChange && (
         <ChangeTimeDurationModal
@@ -1316,6 +1390,7 @@ function App() {
           onClose={handleCloseTopUpModal}
           onTopUp={handleTopUpBalance}
           studentName={selectedStudentForTopUp.name}
+          currency={appSettings.currency}
         />
       )}
       {selectedStudentForReport && (
@@ -1332,6 +1407,7 @@ function App() {
         reportData={generatedReportData}
         studentName={selectedStudentForReport?.name || "Student"}
         lessonCount={reportLessonCount}
+        currency={appSettings.currency}
       />
       {isSettingsModalOpen && (
         <SettingsModal
@@ -1341,6 +1417,8 @@ function App() {
           onUpdateStartDay={handleUpdateStartOfWeekDay}
           currentDarkMode={appSettings.darkMode}
           onUpdateDarkMode={handleUpdateDarkMode}
+          currentCurrency={appSettings.currency}
+          onUpdateCurrency={handleUpdateCurrency}
         />
       )}
       <ToastNotification toasts={toasts} removeToast={removeToast} />
