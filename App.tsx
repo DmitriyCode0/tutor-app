@@ -310,52 +310,9 @@ function App() {
 
   const autoUpdateAllStudentLessonPaidStatus = useCallback(
     (currentLessons: Lesson[], currentStudents: Student[]): Lesson[] => {
-      if (
-        !currentLessons ||
-        !currentStudents ||
-        currentLessons.length === 0 ||
-        currentStudents.length === 0
-      ) {
-        return currentLessons || [];
-      }
-
-      let newLessonsArray = currentLessons.map((l) => ({ ...l }));
-
-      currentStudents.forEach((student) => {
-        let simulatedAvailableBalance = student.balance;
-
-        // First, subtract costs of lessons ALREADY marked as paid by direct user action or previous auto-updates
-        newLessonsArray
-          .filter((l) => l.studentId === student.id && l.isPaid)
-          .forEach((paidLesson) => {
-            simulatedAvailableBalance -= paidLesson.price;
-          });
-
-        // Now, iterate through unpaid lessons and try to mark them paid if the simulated balance allows
-        const unpaidLessonsForStudentIndices = newLessonsArray
-          .map((lesson, index) => ({ lesson, index })) // Keep track of original index
-          .filter(
-            ({ lesson }) => lesson.studentId === student.id && !lesson.isPaid
-          )
-          .sort(
-            (a, b) =>
-              parseTimeToDate(a.lesson.date, a.lesson.hour).getTime() -
-              parseTimeToDate(b.lesson.date, b.lesson.hour).getTime()
-          );
-
-        for (const {
-          lesson: lessonToPotentiallyPay,
-          index: lessonIndex,
-        } of unpaidLessonsForStudentIndices) {
-          if (simulatedAvailableBalance >= lessonToPotentiallyPay.price) {
-            newLessonsArray[lessonIndex].isPaid = true;
-            simulatedAvailableBalance -= lessonToPotentiallyPay.price;
-          } else {
-            newLessonsArray[lessonIndex].isPaid = false;
-          }
-        }
-      });
-      return newLessonsArray;
+      // With the new post-payment system, lessons should remain unpaid until manually marked as paid
+      // Auto-payment is disabled as it doesn't fit the new income tracking model
+      return currentLessons || [];
     },
     []
   );
@@ -477,7 +434,7 @@ function App() {
       )
     );
     handleCloseTopUpModal();
-    addToast(`Balance updated for ${selectedStudentForTopUp.name}.`, "success");
+    addToast(`Income adjusted for ${selectedStudentForTopUp.name}.`, "success");
   };
 
   const handleOpenAddTipsModal = (lesson: Lesson) => {
@@ -548,33 +505,14 @@ function App() {
 
     const isNowPaid = !lessonToToggle.isPaid;
     let priceAdjustment = 0;
-    let canProceed = true;
 
     if (isNowPaid) {
-      // Trying to mark as PAID
-      if (studentOfLesson.balance < lessonToToggle.price) {
-        addToast(
-          `Error: ${
-            studentOfLesson.name
-          } has insufficient balance (${formatCurrency(
-            studentOfLesson.balance,
-            appSettings.currency
-          )}) to pay for this ${formatCurrency(
-            lessonToToggle.price,
-            appSettings.currency
-          )} lesson.`,
-          "error"
-        );
-        canProceed = false;
-      } else {
-        priceAdjustment = -lessonToToggle.price; // Deduct from balance
-      }
+      // Trying to mark as PAID - ADD to balance (income received)
+      priceAdjustment = lessonToToggle.price; // Add to balance
     } else {
-      // Trying to mark as UNPAID
-      priceAdjustment = lessonToToggle.price; // Add back to balance
+      // Trying to mark as UNPAID - SUBTRACT from balance (reverse income)
+      priceAdjustment = -lessonToToggle.price; // Subtract from balance
     }
-
-    if (!canProceed) return;
 
     const updatedStudents = students.map((s) =>
       s.id === studentOfLesson.id

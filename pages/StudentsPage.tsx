@@ -84,10 +84,6 @@ function StudentsPage({
         <ul className="student-list">
           {students.map((student) => {
             const studentPrice = getStoredStudentPrice(student.name);
-            const remainingLessons =
-              studentPrice && studentPrice > 0
-                ? Math.floor(student.balance / studentPrice)
-                : 0;
 
             return (
               <li key={student.id} className="student-item">
@@ -98,17 +94,13 @@ function StudentsPage({
                       Avg. Price: {getAveragePriceForStudent(student.id)}
                     </span>
                     <span className="student-stat">
-                      Balance: {formatCurrency(student.balance, currency)}
+                      Total Income: {formatCurrency(student.balance, currency)}
                       <button
                         onClick={() => onOpenTopUpModal(student)}
                         className="top-up-button"
                       >
-                        Top Up/Deduct
+                        Adjust Income
                       </button>
-                    </span>
-                    <span className="student-stat">
-                      Remaining Lessons (Est.):{" "}
-                      {studentPrice ? remainingLessons : "N/A (Price not set)"}
                     </span>
                     <span className="student-stat">
                       Lessons This Week:{" "}

@@ -20,7 +20,7 @@ function TopUpModal({
     const topUpAmount = parseFloat(amount);
     if (isNaN(topUpAmount) || topUpAmount === 0) {
       alert(
-        "Please enter a valid amount (can be negative for deductions, but not zero)."
+        "Please enter a valid amount (can be negative for corrections, but not zero)."
       );
       return;
     }
@@ -63,7 +63,7 @@ function TopUpModal({
     >
       <div className="modal-content" onClick={(e) => e.stopPropagation()}>
         <h3 id="top-up-modal-title" className="modal-header">
-          Top Up/Deduct Balance for {studentName}
+          Adjust Income for {studentName}
         </h3>
         <form onSubmit={handleSubmit} className="modal-form">
           <div className="form-group">
@@ -82,7 +82,7 @@ function TopUpModal({
           </div>
           <div className="modal-actions">
             <button type="submit" className="button-primary">
-              Update Balance
+              Adjust Income
             </button>
             <button
               type="button"
