@@ -4,7 +4,17 @@
  */
 import React, { useState, useEffect, useCallback } from "react";
 
-import { AppSettings, Student, Lesson, Toast, Page, Currency } from "./types";
+import {
+  AppSettings,
+  Student,
+  Lesson,
+  Toast,
+  Page,
+  Currency,
+  User,
+  SyncStatus,
+  AuthCredentials,
+} from "./types";
 import {
   DAY_NAMES_FULL,
   DAY_NAMES_SHORT,
@@ -33,6 +43,7 @@ import {
 import { checkConflict } from "./utils/lessonUtils";
 import { formatCurrency } from "./utils/currencyUtils";
 import { useResponsive } from "./utils/responsiveUtils";
+import { cloudSyncService, downloadFile } from "./utils/cloudSyncUtils";
 
 import LessonModal from "./components/LessonModal";
 import ViewLessonModal from "./components/ViewLessonModal";
@@ -49,6 +60,7 @@ import WeeklyCalendar from "./components/WeeklyCalendar";
 import StatisticsPage from "./pages/StatisticsPage";
 import StudentsPage from "./pages/StudentsPage";
 import TutorLogo from "./components/TutorLogo";
+import UserCabinetModal from "./components/UserCabinetModal";
 
 function App() {
   const { isMobile, isTouch } = useResponsive();
@@ -125,6 +137,15 @@ function App() {
   const [toasts, setToasts] = useState<Toast[]>([]);
   const [isSettingsModalOpen, setIsSettingsModalOpen] = useState(false);
 
+  // User Cabinet state
+  const [isUserCabinetModalOpen, setIsUserCabinetModalOpen] = useState(false);
+  const [currentUser, setCurrentUser] = useState<User | null>(null);
+  const [syncStatus, setSyncStatus] = useState<SyncStatus>({
+    isOnline: navigator.onLine,
+    isSyncing: false,
+    pendingChanges: 0,
+  });
+
   const [appSettings, setAppSettingsState] = useState<AppSettings>({
     startOfWeekDay: 0,
     darkMode: false,
@@ -192,7 +213,43 @@ function App() {
     } else {
       document.body.classList.remove("dark-mode");
     }
+    // Notify cloud sync service of settings change
+    cloudSyncService.notifyDataChange();
   }, [appSettings]);
+
+  // Cloud sync initialization and status monitoring
+  useEffect(() => {
+    // Check for existing user session
+    const existingUser = cloudSyncService.getCurrentUser();
+    if (existingUser) {
+      setCurrentUser(existingUser);
+      cloudSyncService.enableAutoSync();
+    }
+
+    // Set up sync status monitoring
+    const unsubscribeSync = cloudSyncService.onSyncStatusChange((status) => {
+      setSyncStatus(status);
+    });
+
+    // Set up online/offline status monitoring
+    const handleOnlineStatusChange = () => {
+      setSyncStatus((prev) => ({ ...prev, isOnline: navigator.onLine }));
+    };
+
+    window.addEventListener("online", handleOnlineStatusChange);
+    window.addEventListener("offline", handleOnlineStatusChange);
+
+    return () => {
+      unsubscribeSync();
+      window.removeEventListener("online", handleOnlineStatusChange);
+      window.removeEventListener("offline", handleOnlineStatusChange);
+    };
+  }, []);
+
+  // Track pending changes for sync
+  useEffect(() => {
+    setSyncStatus((prev) => ({ ...prev, pendingChanges: 0 })); // Could be enhanced to track actual changes
+  }, [students, lessons, appSettings]);
 
   const addToast = useCallback(
     (message: string, type: "success" | "info" | "error" = "info") => {
@@ -320,6 +377,8 @@ function App() {
     if (lessons.length > 0) {
       // Only save if lessons exist to avoid overwriting with empty array on initial bug
       localStorage.setItem(LOCAL_STORAGE_LESSONS_KEY, JSON.stringify(lessons));
+      // Notify cloud sync service of data change
+      cloudSyncService.notifyDataChange();
     }
   }, [lessons]);
 
@@ -330,6 +389,8 @@ function App() {
         LOCAL_STORAGE_STUDENTS_KEY,
         JSON.stringify(students)
       );
+      // Notify cloud sync service of data change
+      cloudSyncService.notifyDataChange();
     }
   }, [students]);
 
@@ -1148,6 +1209,98 @@ function App() {
     setLessonForTimeDurationChange(null);
   };
 
+  // User Cabinet handlers
+  const handleOpenUserCabinetModal = () => setIsUserCabinetModalOpen(true);
+  const handleCloseUserCabinetModal = () => setIsUserCabinetModalOpen(false);
+
+  const handleSignIn = async (credentials: AuthCredentials) => {
+    try {
+      const user = await cloudSyncService.signIn(credentials);
+      setCurrentUser(user);
+
+      // Check for downloaded data and update app state
+      const downloadedData = await cloudSyncService.downloadDataOnSignIn();
+      if (downloadedData) {
+        setStudentsState(downloadedData.students);
+        setLessonsState(downloadedData.lessons);
+        setAppSettingsState(downloadedData.settings);
+        addToast(
+          `Welcome back, ${user.name}! Your data has been synced.`,
+          "success"
+        );
+      } else {
+        addToast(`Welcome back, ${user.name}!`, "success");
+      }
+
+      // Enable automatic sync
+      cloudSyncService.enableAutoSync();
+    } catch (error) {
+      throw new Error("Failed to sign in. Please check your credentials.");
+    }
+  };
+
+  const handleSignUp = async (
+    credentials: AuthCredentials & { name: string }
+  ) => {
+    try {
+      const user = await cloudSyncService.signUp(credentials);
+      setCurrentUser(user);
+      addToast(
+        `Welcome, ${user.name}! Your account has been created.`,
+        "success"
+      );
+
+      // Enable automatic sync for new users
+      cloudSyncService.enableAutoSync();
+    } catch (error) {
+      throw new Error("Failed to create account. Please try again.");
+    }
+  };
+
+  const handleSignOut = () => {
+    cloudSyncService.signOut();
+    cloudSyncService.disableAutoSync();
+    setCurrentUser(null);
+    addToast("You have been signed out.", "info");
+  };
+
+  const handleSync = async () => {
+    try {
+      await cloudSyncService.syncData(students, lessons, appSettings);
+      addToast("Data synced successfully!", "success");
+    } catch (error) {
+      throw new Error("Failed to sync data. Please try again.");
+    }
+  };
+
+  const handleExportData = () => {
+    const exportData = cloudSyncService.exportData(
+      students,
+      lessons,
+      appSettings
+    );
+    const filename = `tutorapp-export-${
+      new Date().toISOString().split("T")[0]
+    }.json`;
+    downloadFile(exportData, filename);
+    addToast("Data exported successfully!", "success");
+  };
+
+  const handleImportData = async (file: File) => {
+    try {
+      const importedData = await cloudSyncService.importData(file);
+
+      // Merge imported data with existing data
+      setStudentsState(importedData.students);
+      setLessonsState(importedData.lessons);
+      setAppSettingsState(importedData.settings);
+
+      addToast("Data imported successfully!", "success");
+    } catch (error) {
+      throw new Error("Failed to import data. Please check the file format.");
+    }
+  };
+
   const CurrentPeriodDisplay = () => {
     const endDate = addDays(viewStartDate, NUM_WEEKS_TO_DISPLAY * 7 - 1);
     return (
@@ -1177,21 +1330,49 @@ function App() {
           <h1 id="app-main-heading">
             {isMobile ? "Tutor Schedule" : "Weekly Tutoring Schedule"}
           </h1>
-          <button
-            onClick={handleOpenSettingsModal}
-            className="settings-button"
-            aria-label="Open Settings"
-          >
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              viewBox="0 0 24 24"
-              fill="currentColor"
-              width="24px"
-              height="24px"
+          <div className="header-buttons">
+            <button
+              onClick={handleOpenUserCabinetModal}
+              className="user-cabinet-button"
+              aria-label="Open User Cabinet"
+              title={
+                currentUser
+                  ? `Signed in as ${currentUser.name}`
+                  : "User Cabinet"
+              }
             >
-              <path d="M19.14,12.94c0.04-0.3,0.06-0.61,0.06-0.94c0-0.32-0.02-0.64-0.07-0.94l2.03-1.58c0.18-0.14,0.23-0.41,0.12-0.61 l-1.92-3.32c-0.12-0.22-0.37-0.29-0.59-0.22l-2.39,0.96c-0.5-0.38-1.03-0.7-1.62-0.94L14.4,2.81c-0.04-0.24-0.24-0.41-0.48-0.41 h-3.84c-0.24,0-0.43,0.17-0.47,0.41L9.25,5.35C8.66,5.59,8.12,5.92,7.63,6.29L5.24,5.33c-0.22-0.08-0.47,0-0.59,0.22L2.74,8.87 C2.62,9.08,2.66,9.34,2.86,9.48l2.03,1.58C4.84,11.36,4.82,11.68,4.82,12c0,0.32,0.02,0.64,0.07,0.94l-2.03,1.58 c-0.18,0.14-0.23,0.41-0.12,0.61l1.92,3.32c0.12,0.22,0.37,0.29,0.59,0.22l2.39-0.96c0.5,0.38,1.03,0.7,1.62,0.94l0.36,2.54 c0.05,0.24,0.24,0.41,0.48,0.41h3.84c0.24,0,0.44-0.17,0.47-0.41l0.36-2.54c0.59-0.24,1.13-0.56,1.62-0.94l2.39,0.96 c0.22,0.08,0.47,0,0.59-0.22l1.92-3.32c0.12-0.22,0.07-0.47-0.12-0.61L19.14,12.94z M12,15.6c-1.98,0-3.6-1.62-3.6-3.6 s1.62-3.6,3.6-3.6s3.6,1.62,3.6,3.6S13.98,15.6,12,15.6z" />
-            </svg>
-          </button>
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                viewBox="0 0 24 24"
+                fill="currentColor"
+                width="24px"
+                height="24px"
+              >
+                <path d="M12,2A10,10 0 0,0 2,12A10,10 0 0,0 12,22A10,10 0 0,0 22,12A10,10 0 0,0 12,2M7.07,18.28C7.5,17.38 10.12,16.5 12,16.5C13.88,16.5 16.5,17.38 16.93,18.28C15.57,19.36 13.86,20 12,20C10.14,20 8.43,19.36 7.07,18.28M18.36,16.83C16.93,15.09 13.46,14.5 12,14.5C10.54,14.5 7.07,15.09 5.64,16.83C4.62,15.5 4,13.82 4,12C4,7.59 7.59,4 12,4C16.41,4 20,7.59 20,12C20,13.82 19.38,15.5 18.36,16.83M12,6C10.06,6 8.5,7.56 8.5,9.5C8.5,11.44 10.06,13 12,13C13.94,13 15.5,11.44 15.5,9.5C15.5,7.56 13.94,6 12,6M12,11A1.5,1.5 0 0,1 10.5,9.5A1.5,1.5 0 0,1 12,8A1.5,1.5 0 0,1 13.5,9.5A1.5,1.5 0 0,1 12,11Z" />
+              </svg>
+              {!isMobile && currentUser && (
+                <span className="user-name">{currentUser.name}</span>
+              )}
+              {!isMobile && !currentUser && (
+                <span className="user-name">Sign In</span>
+              )}
+            </button>
+            <button
+              onClick={handleOpenSettingsModal}
+              className="settings-button"
+              aria-label="Open Settings"
+            >
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                viewBox="0 0 24 24"
+                fill="currentColor"
+                width="24px"
+                height="24px"
+              >
+                <path d="M19.14,12.94c0.04-0.3,0.06-0.61,0.06-0.94c0-0.32-0.02-0.64-0.07-0.94l2.03-1.58c0.18-0.14,0.23-0.41,0.12-0.61 l-1.92-3.32c-0.12-0.22-0.37-0.29-0.59-0.22l-2.39,0.96c-0.5-0.38-1.03-0.7-1.62-0.94L14.4,2.81c-0.04-0.24-0.24-0.41-0.48-0.41 h-3.84c-0.24,0-0.43,0.17-0.47,0.41L9.25,5.35C8.66,5.59,8.12,5.92,7.63,6.29L5.24,5.33c-0.22-0.08-0.47,0-0.59,0.22L2.74,8.87 C2.62,9.08,2.66,9.34,2.86,9.48l2.03,1.58C4.84,11.36,4.82,11.68,4.82,12c0,0.32,0.02,0.64,0.07,0.94l-2.03,1.58 c-0.18,0.14-0.23,0.41-0.12,0.61l1.92,3.32c0.12,0.22,0.37,0.29,0.59,0.22l2.39-0.96c0.5,0.38,1.03,0.7,1.62,0.94l0.36,2.54 c0.05,0.24,0.24,0.41,0.48,0.41h3.84c0.24,0,0.44-0.17,0.47-0.41l0.36-2.54c0.59-0.24,1.13-0.56,1.62-0.94l2.39,0.96 c0.22,0.08,0.47,0,0.59-0.22l1.92-3.32c0.12-0.22,0.07-0.47-0.12-0.61L19.14,12.94z M12,15.6c-1.98,0-3.6-1.62-3.6-3.6 s1.62-3.6,3.6-3.6s3.6,1.62,3.6,3.6S13.98,15.6,12,15.6z" />
+              </svg>
+            </button>
+          </div>
         </div>
         <nav
           className={`main-nav ${isMobile ? "mobile-nav" : "desktop-nav"}`}
@@ -1425,6 +1606,18 @@ function App() {
           onUpdateCurrency={handleUpdateCurrency}
         />
       )}
+      <UserCabinetModal
+        isOpen={isUserCabinetModalOpen}
+        onClose={handleCloseUserCabinetModal}
+        onSignIn={handleSignIn}
+        onSignUp={handleSignUp}
+        onSignOut={handleSignOut}
+        user={currentUser}
+        syncStatus={syncStatus}
+        onSync={handleSync}
+        onExportData={handleExportData}
+        onImportData={handleImportData}
+      />
       <ToastNotification toasts={toasts} removeToast={removeToast} />
       <footer>
         <p>&copy; {new Date().getFullYear()} Tutor App. All rights reserved.</p>

@@ -9,6 +9,7 @@ import {
   NUM_WEEKS_TO_DISPLAY,
   MOBILE_HOURS_OF_THE_DAY,
   MOBILE_DAYS_TO_DISPLAY,
+  MOBILE_HOURS_RANGE,
 } from "../constants";
 import {
   addDays,
@@ -64,7 +65,7 @@ function WeeklyCalendar({
 
     // Calculate which time slot row this falls into (0-based index)
     const slotIndex = isMobile
-      ? hours - 6 // MOBILE_HOURS_OF_THE_DAY starts at 06:00
+      ? hours - MOBILE_HOURS_RANGE.start // MOBILE_HOURS_OF_THE_DAY starts at 00:00
       : hours - 6; // HOURS_OF_THE_DAY starts at 06:00
 
     // If time is outside our display range, don't show line

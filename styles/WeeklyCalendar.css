@@ -146,8 +146,8 @@
   .mobile-calendar .calendar-grid {
     /* Use mobile-specific variables */
     min-width: calc(
-      var(--mobile-time-label-width) + 3 * 120px
-    ); /* 3 days * wider columns */
+      var(--mobile-time-label-width) + 7 * 100px
+    ); /* 7 days * columns */
   }
 
   .mobile-calendar .time-label-cell {

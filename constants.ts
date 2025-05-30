@@ -53,10 +53,10 @@ export const NUM_WEEKS_TO_DISPLAY: number = 1;
 
 // Mobile responsive constants
 export const MOBILE_BREAKPOINT = 768;
-export const MOBILE_HOURS_RANGE = { start: 6, end: 18 }; // 6 AM to 6 PM for mobile
-export const MOBILE_DAYS_TO_DISPLAY = 3; // Show fewer days on mobile
+export const MOBILE_HOURS_RANGE = { start: 0, end: 24 }; // Show all 24 hours on mobile
+export const MOBILE_DAYS_TO_DISPLAY = 7; // Show all 7 days on mobile
 
-// Generate hours for mobile (reduced range)
+// Generate hours for mobile (all 24 hours)
 export const MOBILE_HOURS_OF_THE_DAY = Array.from(
   { length: MOBILE_HOURS_RANGE.end - MOBILE_HOURS_RANGE.start },
   (_, i) => {

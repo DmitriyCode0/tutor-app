@@ -5,6 +5,15 @@
 
 import { DragEvent } from "react";
 
+// --- App Navigation & UI Types ---
+export type Page = "calendar" | "statistics" | "students";
+
+export interface Toast {
+  id: string;
+  message: string;
+  type: "success" | "info" | "error";
+}
+
 // --- App Settings ---
 export interface Currency {
   code: string;
@@ -39,13 +48,55 @@ export interface Lesson {
   tips: number;
 }
 
-export interface Toast {
+// --- User Cabinet & Cloud Sync ---
+export interface User {
   id: string;
-  message: string;
-  type: "success" | "info" | "error";
+  email: string;
+  name: string;
+  createdAt: string;
+  lastSyncAt?: string;
+  subscription?: UserSubscription;
 }
 
-export type Page = "calendar" | "statistics" | "students";
+export interface UserSubscription {
+  type: "free" | "premium";
+  expiresAt?: string;
+  features: string[];
+}
+
+export interface CloudSyncData {
+  students: Student[];
+  lessons: Lesson[];
+  settings: AppSettings;
+  lastModified: string;
+  version: number;
+}
+
+export interface SyncStatus {
+  isOnline: boolean;
+  isSyncing: boolean;
+  lastSyncTime?: string;
+  pendingChanges: number;
+  error?: string;
+}
+
+export interface AuthCredentials {
+  email: string;
+  password: string;
+}
+
+export interface UserCabinetModalProps {
+  isOpen: boolean;
+  onClose: () => void;
+  user: User | null;
+  syncStatus: SyncStatus;
+  onSignIn: (credentials: AuthCredentials) => Promise<void>;
+  onSignUp: (credentials: AuthCredentials & { name: string }) => Promise<void>;
+  onSignOut: () => void;
+  onSync: () => Promise<void>;
+  onExportData: () => void;
+  onImportData: (file: File) => Promise<void>;
+}
 
 // --- Modals Props Interfaces ---
 export interface LessonModalProps {

@@ -38,6 +38,46 @@ header {
   text-align: center;
 }
 
+.header-buttons {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  flex-shrink: 0;
+}
+
+.user-cabinet-button {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0.5rem;
+  color: var(--text-secondary);
+  transition: color 0.2s ease, background-color 0.2s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  border-radius: 6px;
+  font-size: 0.9rem;
+  min-width: 44px; /* Touch-friendly minimum */
+}
+
+.user-cabinet-button:hover {
+  color: var(--text-accent);
+  background-color: var(--bg-tertiary);
+}
+
+.user-cabinet-button svg {
+  width: 24px;
+  height: 24px;
+  fill: currentColor;
+  flex-shrink: 0;
+}
+
+.user-cabinet-button .user-name {
+  font-weight: 500;
+  white-space: nowrap;
+}
+
 .settings-button {
   background: none;
   border: none;
@@ -290,4 +330,33 @@ main {
 
 .mobile-calendar .lesson-details:active {
   animation: touch-pulse 0.2s ease;
+}
+
+/* Mobile specific styles */
+.mobile-app .header-content {
+  gap: 0.5rem;
+}
+
+.mobile-app #app-main-heading {
+  font-size: 1.3rem;
+}
+
+.mobile-app .header-buttons {
+  gap: 0.25rem;
+}
+
+.mobile-app .user-cabinet-button .user-name {
+  display: none; /* Hide user name on mobile */
+}
+
+.mobile-app .user-cabinet-button,
+.mobile-app .settings-button {
+  min-width: 40px;
+  padding: 0.4rem;
+}
+
+.mobile-app .user-cabinet-button svg,
+.mobile-app .settings-button svg {
+  width: 22px;
+  height: 22px;
 }
