@@ -47,6 +47,7 @@ export const LOCAL_STORAGE_STUDENT_PRICES_KEY = "tutorAppStudentPrices";
 export const LOCAL_STORAGE_LESSONS_KEY = "tutorAppLessons";
 export const LOCAL_STORAGE_STUDENTS_KEY = "tutorAppStudents";
 export const LOCAL_STORAGE_SETTINGS_KEY = "tutorAppAppSettings";
+export const LOCAL_STORAGE_ARCHIVED_STUDENTS_KEY = "tutorAppArchivedStudents";
 
 export const NUM_RECURRING_WEEKS_TOTAL = 13; // Approx 3 months
 export const NUM_WEEKS_TO_DISPLAY: number = 1;

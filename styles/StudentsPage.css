@@ -56,6 +56,31 @@
 /* .top-up-button is in buttons.css */
 /* .student-report-button is in buttons.css */
 
+.student-actions {
+  display: flex;
+  gap: 0.5rem;
+  margin-top: 0.75rem;
+  flex-wrap: wrap;
+}
+
+.student-action-button {
+  padding: 0.4rem 0.8rem;
+  font-size: 0.85rem;
+  border-radius: 6px;
+  border: none;
+  cursor: pointer;
+  font-weight: 500;
+  transition: background-color 0.2s ease, transform 0.1s ease;
+  min-width: 80px;
+}
+
+.student-action-button:hover {
+  transform: translateY(-1px);
+}
+
+.student-action-button:active {
+  transform: translateY(0);
+}
 
 .color-picker-grid {
   display: grid;
@@ -119,6 +144,10 @@
   .student-info-details .student-stat {
     font-size: 0.9rem;
     justify-content: center; /* Center content within stat line */
+  }
+  .student-actions {
+    justify-content: center; /* Center action buttons on mobile */
+    margin-top: 1rem;
   }
   .color-picker-grid { 
     margin-top: 1rem; 

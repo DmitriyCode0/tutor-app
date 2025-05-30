@@ -20,6 +20,8 @@ function StudentsPage({
   onUpdateStudentColor,
   onOpenTopUpModal,
   onOpenReportConfigModal,
+  onArchiveStudent,
+  onDeleteStudent,
   startOfWeekDay,
   currency,
 }: StudentsPageProps) {
@@ -130,6 +132,22 @@ function StudentsPage({
                     >
                       Generate Report
                     </button>
+                    <div className="student-actions">
+                      <button
+                        onClick={() => onArchiveStudent(student.id)}
+                        className="button-secondary student-action-button"
+                        title="Archive student - keeps past lessons but removes future ones"
+                      >
+                        Archive
+                      </button>
+                      <button
+                        onClick={() => onDeleteStudent(student.id)}
+                        className="button-danger student-action-button"
+                        title="Delete student - keeps past lessons but removes future ones"
+                      >
+                        Delete
+                      </button>
+                    </div>
                   </div>
                   <div
                     className="color-picker-grid"

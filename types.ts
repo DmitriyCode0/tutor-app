@@ -33,6 +33,8 @@ export interface Student {
   name: string;
   color: string;
   balance: number;
+  isArchived?: boolean; // Optional for backward compatibility
+  archivedDate?: string; // ISO date string when archived
 }
 
 export interface Lesson {
@@ -285,6 +287,8 @@ export interface StudentsPageProps {
   onUpdateStudentColor: (studentId: string, newColor: string) => void;
   onOpenTopUpModal: (student: Student) => void;
   onOpenReportConfigModal: (student: Student) => void;
+  onArchiveStudent: (studentId: string) => void;
+  onDeleteStudent: (studentId: string) => void;
   startOfWeekDay: 0 | 1;
   currency: Currency;
 }

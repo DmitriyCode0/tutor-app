@@ -24,6 +24,7 @@ import {
   LOCAL_STORAGE_LESSONS_KEY,
   LOCAL_STORAGE_STUDENTS_KEY,
   LOCAL_STORAGE_SETTINGS_KEY,
+  LOCAL_STORAGE_ARCHIVED_STUDENTS_KEY,
   NUM_RECURRING_WEEKS_TOTAL,
   NUM_WEEKS_TO_DISPLAY,
   DEFAULT_CURRENCY,
@@ -865,6 +866,124 @@ function App() {
     );
   };
 
+  const handleArchiveStudent = (studentId: string) => {
+    const studentToArchive = students.find((s) => s.id === studentId);
+    if (!studentToArchive) {
+      addToast("Error: Student not found for archiving.", "error");
+      return;
+    }
+
+    // Archive the student by adding archived flags
+    const archivedStudent = {
+      ...studentToArchive,
+      isArchived: true,
+      archivedDate: new Date().toISOString(),
+    };
+
+    // Remove student from active students list
+    const updatedActiveStudents = students.filter((s) => s.id !== studentId);
+
+    // Get or create archived students list
+    let archivedStudents: Student[] = [];
+    try {
+      const storedArchivedRaw = localStorage.getItem(LOCAL_STORAGE_ARCHIVED_STUDENTS_KEY);
+      if (storedArchivedRaw) {
+        archivedStudents = JSON.parse(storedArchivedRaw);
+      }
+    } catch (e) {
+      console.error("Error loading archived students", e);
+    }
+
+    // Add to archived students
+    const updatedArchivedStudents = [...archivedStudents, archivedStudent];
+
+    // Get current date for filtering future lessons
+    const now = new Date();
+
+    // Find future lessons for this student that need to be deleted
+    const lessonsToRemove: string[] = [];
+    const refundsNeeded: { studentId: string; amount: number }[] = [];
+
+    lessons.forEach((lesson) => {
+      if (lesson.studentId === studentId) {
+        const lessonDate = parseTimeToDate(lesson.date, lesson.hour);
+        if (lessonDate > now) {
+          // This is a future lesson, mark for deletion
+          lessonsToRemove.push(lesson.id);
+          if (lesson.isPaid) {
+            // If the lesson was paid, add refund to student balance
+            refundsNeeded.push({ studentId, amount: lesson.price });
+          }
+        }
+      }
+    });
+
+    // Remove future lessons
+    const updatedLessons = lessons.filter((lesson) => !lessonsToRemove.includes(lesson.id));
+
+    // Calculate total refund amount
+    const totalRefund = refundsNeeded.reduce((sum, refund) => sum + refund.amount, 0);
+
+    // Update archived student's balance with refund if any
+    if (totalRefund > 0) {
+      archivedStudent.balance += totalRefund;
+      updatedArchivedStudents[updatedArchivedStudents.length - 1] = archivedStudent;
+    }
+
+    // Update state and localStorage
+    setStudentsState(updatedActiveStudents);
+    setLessons(updatedLessons);
+    localStorage.setItem(LOCAL_STORAGE_ARCHIVED_STUDENTS_KEY, JSON.stringify(updatedArchivedStudents));
+
+    const refundMessage = totalRefund > 0 ? ` Balance of ${formatCurrency(totalRefund, appSettings.currency)} refunded for deleted future lessons.` : '';
+    addToast(`${studentToArchive.name} has been archived.${refundMessage}`, "success");
+  };
+
+  const handleDeleteStudent = (studentId: string) => {
+    const studentToDelete = students.find((s) => s.id === studentId);
+    if (!studentToDelete) {
+      addToast("Error: Student not found for deletion.", "error");
+      return;
+    }
+
+    // Get current date for filtering future lessons
+    const now = new Date();
+
+    // Find future lessons for this student that need to be deleted
+    const lessonsToRemove: string[] = [];
+    const refundsNeeded: { studentId: string; amount: number }[] = [];
+
+    lessons.forEach((lesson) => {
+      if (lesson.studentId === studentId) {
+        const lessonDate = parseTimeToDate(lesson.date, lesson.hour);
+        if (lessonDate > now) {
+          // This is a future lesson, mark for deletion
+          lessonsToRemove.push(lesson.id);
+          if (lesson.isPaid) {
+            // If the lesson was paid, we need to handle the balance somehow
+            // Since we're deleting the student, we can't refund to their balance
+            refundsNeeded.push({ studentId, amount: lesson.price });
+          }
+        }
+      }
+    });
+
+    // Remove future lessons (past lessons are kept in the system)
+    const updatedLessons = lessons.filter((lesson) => !lessonsToRemove.includes(lesson.id));
+
+    // Remove student from active students list
+    const updatedActiveStudents = students.filter((s) => s.id !== studentId);
+
+    // Update state
+    setStudentsState(updatedActiveStudents);
+    setLessons(updatedLessons);
+
+    const refundWarning = refundsNeeded.length > 0 
+      ? ` Note: ${refundsNeeded.length} paid future lesson(s) were deleted - consider manual refund if needed.` 
+      : '';
+    addToast(`${studentToDelete.name} has been deleted.${refundWarning}`, "success");
+  };
+
   const handleLessonDragStart = (lessonId: string) => {
     setDraggedLessonId(lessonId);
     // Find the lesson and set its duration for drag preview
@@ -1474,6 +1593,8 @@ function App() {
             onUpdateStudentColor={handleUpdateStudentColor}
             onOpenTopUpModal={handleOpenTopUpModal}
             onOpenReportConfigModal={handleOpenReportConfigModal}
+            onArchiveStudent={handleArchiveStudent}
+            onDeleteStudent={handleDeleteStudent}
             startOfWeekDay={appSettings.startOfWeekDay}
             currency={appSettings.currency}
           />
