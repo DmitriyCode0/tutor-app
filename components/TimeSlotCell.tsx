@@ -35,6 +35,7 @@ function TimeSlotCell({
   );
   const [dragOverTime, setDragOverTime] = React.useState<string | null>(null);
   const [isTouchDragging, setIsTouchDragging] = React.useState(false);
+  const [isLongPressing, setIsLongPressing] = React.useState(false);
 
   // Create enhanced touch handlers with visual feedback
   const enhancedTouchHandlers = React.useMemo(() => {
@@ -49,6 +50,13 @@ function TimeSlotCell({
     return {
       onTouchStart: (e: React.TouchEvent) => {
         setIsTouchDragging(true);
+        setIsLongPressing(false);
+
+        // Start long press visual feedback after a short delay
+        setTimeout(() => {
+          setIsLongPressing(true);
+        }, 100);
+
         originalHandlers.onTouchStart(e);
       },
       onTouchMove: (e: React.TouchEvent) => {
@@ -56,6 +64,7 @@ function TimeSlotCell({
       },
       onTouchEnd: (e: React.TouchEvent) => {
         setIsTouchDragging(false);
+        setIsLongPressing(false);
         originalHandlers.onTouchEnd(e);
       },
     };
@@ -242,9 +251,20 @@ function TimeSlotCell({
           draggable={!!onDragStartLesson}
           onDragStart={handleDragStart}
           style={getLessonStyle(lesson)}
-          data-dragging={isTouchDragging}
+          data-dragging={isTouchDragging || touchDragHandlers?.isDragging}
+          data-long-pressing={
+            isLongPressing &&
+            touchDragHandlers?.isLongPressing &&
+            !touchDragHandlers?.isDragging
+          }
           {...enhancedTouchHandlers}
         >
+          {/* Long press visual indicator */}
+          {isLongPressing &&
+            touchDragHandlers?.isLongPressing &&
+            !touchDragHandlers?.isDragging && (
+              <div className="long-press-indicator" />
+            )}
           {lesson.recurringId && (
             <span className="lesson-indicator lesson-recurring-indicator-chip">
               R

@@ -13,6 +13,7 @@
   box-shadow: var(--shadow-calendar);
   margin-top: 1rem;
   position: relative;
+  touch-action: auto; /* Allow smooth horizontal and vertical scrolling */
 }
 
 .calendar-grid {
@@ -138,35 +139,36 @@
 /* Responsive Adjustments for WeeklyCalendar.css */
 @media (max-width: 768px) {
   .calendar-grid-wrapper {
-    max-height: calc(100vh - 200px); /* Adjust for mobile viewport */
-    margin-top: 0.5rem;
-    border-radius: 6px;
+    max-height: calc(100vh - 160px); /* Show more content by reducing padding */
+    margin-top: 0.25rem;
+    border-radius: 4px;
   }
 
   .mobile-calendar .calendar-grid {
     /* Use mobile-specific variables */
     min-width: calc(
-      var(--mobile-time-label-width) + 7 * 100px
-    ); /* 7 days * columns */
+      var(--mobile-time-label-width) + 7 * 80px
+    ); /* 7 days * smaller columns for better overview */
   }
 
   .mobile-calendar .time-label-cell {
     width: var(--mobile-time-label-width);
     min-width: var(--mobile-time-label-width);
-    font-size: 0.7rem;
-    padding: 0.25rem 0;
+    height: var(--mobile-time-slot-height); /* Match mobile time slot height */
+    font-size: 0.6rem;
+    padding: 0.15rem 0;
   }
 
   .mobile-calendar .corner-cell {
     width: var(--mobile-time-label-width);
-    height: 35px;
-    font-size: 0.65rem;
+    height: 30px;
+    font-size: 0.55rem;
   }
 
   .mobile-calendar .header-cell {
-    height: 35px;
-    padding: 0.25rem;
-    font-size: 0.8rem;
+    height: 30px;
+    padding: 0.15rem;
+    font-size: 0.7rem;
   }
 
   .mobile-calendar .time-slot-cell {

@@ -64,9 +64,8 @@ function WeeklyCalendar({
     const minutes = now.getMinutes();
 
     // Calculate which time slot row this falls into (0-based index)
-    const slotIndex = isMobile
-      ? hours - MOBILE_HOURS_RANGE.start // MOBILE_HOURS_OF_THE_DAY starts at 00:00
-      : hours - 6; // HOURS_OF_THE_DAY starts at 06:00
+    // Both mobile and desktop hours arrays start at 00:00 (index 0)
+    const slotIndex = hours;
 
     // If time is outside our display range, don't show line
     if (slotIndex < 0 || slotIndex >= hoursToDisplay.length) {

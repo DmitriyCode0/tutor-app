@@ -180,6 +180,16 @@ export interface ConfirmModalProps {
   confirmFutureText: string;
 }
 
+export interface SimpleConfirmModalProps {
+  isOpen: boolean;
+  onClose: () => void;
+  onConfirm: () => void;
+  title: string;
+  message: string;
+  confirmText?: string;
+  isDangerous?: boolean;
+}
+
 export interface TopUpModalProps {
   isOpen: boolean;
   onClose: () => void;
@@ -244,6 +254,9 @@ export interface TimeSlotCellProps {
   draggedLessonDuration?: number; // Duration of the lesson being dragged
   currency: Currency;
   touchDragHandlers?: {
+    isDragging: boolean;
+    isLongPressing: boolean;
+    draggedItem: string | null;
     getTouchEventHandlers: (
       lessonId: string,
       targetDate: Date,
@@ -287,7 +300,6 @@ export interface StudentsPageProps {
   onUpdateStudentColor: (studentId: string, newColor: string) => void;
   onOpenTopUpModal: (student: Student) => void;
   onOpenReportConfigModal: (student: Student) => void;
-  onArchiveStudent: (studentId: string) => void;
   onDeleteStudent: (studentId: string) => void;
   startOfWeekDay: 0 | 1;
   currency: Currency;

@@ -92,9 +92,9 @@
   --time-slot-height: 90px; /* Increased cell height */
 
   /* Mobile responsive variables */
-  --mobile-time-label-width: 40px;
-  --mobile-time-slot-height: 70px;
-  --mobile-font-size-base: 14px;
+  --mobile-time-label-width: 35px;
+  --mobile-time-slot-height: 50px;
+  --mobile-font-size-base: 12px;
 
   /* Lesson Cell Indicators - Light Mode */
   --lesson-chip-paid-bg: #27ae60;

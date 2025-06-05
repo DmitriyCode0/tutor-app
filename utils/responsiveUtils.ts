@@ -61,6 +61,9 @@ export function useTouchDragDrop(callbacks: {
     x: number;
     y: number;
   } | null>(null);
+  const [isLongPressing, setIsLongPressing] = useState(false);
+  const [longPressTimeout, setLongPressTimeout] =
+    useState<NodeJS.Timeout | null>(null);
 
   const getTouchEventHandlers = useCallback(
     (lessonId: string, targetDate: Date, targetHour: string) => {
@@ -69,15 +72,27 @@ export function useTouchDragDrop(callbacks: {
           const touch = e.touches[0];
           setTouchStartPos({ x: touch.clientX, y: touch.clientY });
           setDraggedItem(lessonId);
-          callbacks.onDragStart(lessonId);
+          setIsLongPressing(false);
 
-          // Add haptic feedback on touch devices
+          // Start long press timer (1.5 seconds)
+          const timeout = setTimeout(() => {
+            setIsLongPressing(true);
+            callbacks.onDragStart(lessonId);
+
+            // Strong haptic feedback for long press
+            if ("vibrate" in navigator) {
+              navigator.vibrate([50, 30, 50]); // Pattern to indicate drag mode start
+            }
+          }, 1500);
+
+          setLongPressTimeout(timeout);
+
+          // Light haptic feedback on touch start
           if ("vibrate" in navigator) {
-            navigator.vibrate(10); // Short vibration
+            navigator.vibrate(5); // Very short vibration
           }
 
-          // Prevent scrolling while dragging
-          e.preventDefault();
+          // Don't prevent default initially - allow scrolling
         },
 
         onTouchMove: (e: React.TouchEvent) => {
@@ -87,8 +102,19 @@ export function useTouchDragDrop(callbacks: {
           const deltaX = Math.abs(touch.clientX - touchStartPos.x);
           const deltaY = Math.abs(touch.clientY - touchStartPos.y);
 
-          // Start dragging if moved enough distance
-          if ((deltaX > 10 || deltaY > 10) && !isDragging) {
+          // If we moved significantly, cancel long press (allow scrolling)
+          if ((deltaX > 15 || deltaY > 15) && !isLongPressing) {
+            if (longPressTimeout) {
+              clearTimeout(longPressTimeout);
+              setLongPressTimeout(null);
+            }
+            setDraggedItem(null);
+            setTouchStartPos(null);
+            return;
+          }
+
+          // Start dragging only if long press was completed
+          if (isLongPressing && (deltaX > 10 || deltaY > 10) && !isDragging) {
             setIsDragging(true);
             // Stronger haptic feedback when drag starts
             if ("vibrate" in navigator) {
@@ -96,16 +122,24 @@ export function useTouchDragDrop(callbacks: {
             }
           }
 
-          // Prevent scrolling during drag
+          // Prevent scrolling only during actual drag
           if (isDragging) {
             e.preventDefault();
           }
         },
 
         onTouchEnd: (e: React.TouchEvent) => {
+          // Clear long press timeout if still active
+          if (longPressTimeout) {
+            clearTimeout(longPressTimeout);
+            setLongPressTimeout(null);
+          }
+
+          // If not dragging, just reset and allow normal touch behavior
           if (!isDragging || !draggedItem) {
             setTouchStartPos(null);
             setDraggedItem(null);
+            setIsLongPressing(false);
             return;
           }
 
@@ -145,15 +179,24 @@ export function useTouchDragDrop(callbacks: {
           setIsDragging(false);
           setDraggedItem(null);
           setTouchStartPos(null);
+          setIsLongPressing(false);
         },
       };
     },
-    [touchStartPos, draggedItem, isDragging, callbacks]
+    [
+      touchStartPos,
+      draggedItem,
+      isDragging,
+      isLongPressing,
+      longPressTimeout,
+      callbacks,
+    ]
   );
 
   return {
     isDragging,
     draggedItem,
+    isLongPressing,
     getTouchEventHandlers,
   };
 }
